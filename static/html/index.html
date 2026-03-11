@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Birthday Party - Ticket Sales</title>
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🎉 Birthday Party 2026</h1>
+            <p class="subtitle">Join us for an unforgettable celebration</p>
+        </header>
+
+        <main>
+            <section class="ticket-info">
+                <h2>Event Details</h2>
+                <div class="details-grid">
+                    <div class="detail-item">
+                        <span class="label">📅 Date:</span>
+                        <span class="value">Coming Soon</span>
+                    </div>
+                    <div class="detail-item">
+                        <span class="label">🕐 Time:</span>
+                        <span class="value">TBD</span>
+                    </div>
+                    <div class="detail-item">
+                        <span class="label">📍 Location:</span>
+                        <span class="value">Secret Location</span>
+                    </div>
+                    <div class="detail-item">
+                        <span class="label">👥 Available Tickets:</span>
+                        <span class="value" id="available-tickets">Loading...</span>
+                    </div>
+                </div>
+            </section>
+
+            <section class="booking-section">
+                <h2>Book Your Ticket</h2>
+                <form id="bookingForm" class="booking-form">
+                    <div class="form-group">
+                        <label for="name">Name *</label>
+                        <input type="text" id="name" name="name" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="email">Email *</label>
+                        <input type="email" id="email" name="email" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="guests">Number of Guests *</label>
+                        <input type="number" id="guests" name="guests" min="1" max="5" required>
+                    </div>
+                    <button type="submit" class="btn-primary">Book Ticket</button>
+                </form>
+                <div id="message" class="message"></div>
+            </section>
+        </main>
+
+        <footer>
+            <p>&copy; 2026 Birthday Party. All rights reserved.</p>
+        </footer>
+    </div>
+
+    <script src="/js/main.js"></script>
+</body>
+</html>
