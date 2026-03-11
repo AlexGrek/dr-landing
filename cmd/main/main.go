@@ -9,12 +9,16 @@ import (
 	"dr-landing/internal/server"
 )
 
+var version = "dev"
+
 func main() {
+	log.Printf("dr-landing version %s", version)
+
 	// Initialize database
 	database.Init()
 
 	// Create Fiber app
-	app := server.New()
+	app := server.New(version)
 
 	// Start server
 	go func() {

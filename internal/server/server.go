@@ -1,14 +1,18 @@
 package server
 
 import (
+	"io/fs"
+
 	"dr-landing/internal/handlers"
+	appstatic "dr-landing/internal/static"
 
 	"github.com/gofiber/fiber/v3"
 	"github.com/gofiber/fiber/v3/middleware/logger"
 	"github.com/gofiber/fiber/v3/middleware/recover"
+	"github.com/gofiber/fiber/v3/middleware/static"
 )
 
-func New() *fiber.App {
+func New(version string) *fiber.App {
 	app := fiber.New(fiber.Config{
 		AppName: "dr-landing",
 	})
@@ -18,9 +22,25 @@ func New() *fiber.App {
 	app.Use(recover.New())
 
 	// API Routes
-	app.Get("/api/health", handlers.Health)
+	app.Get("/api/health", handlers.Health(version))
 	app.Get("/api/tickets/available", handlers.GetAvailableTickets)
 	app.Post("/api/tickets/book", handlers.BookTicket)
+
+	// Serve frontend SPA (embedded at build time)
+	distFS, _ := fs.Sub(appstatic.DistFS, "dist")
+	app.Use(static.New("", static.Config{
+		FS:     distFS,
+		Browse: false,
+		// SPA fallback: serve index.html for any unmatched route (react-router)
+		NotFoundHandler: func(c fiber.Ctx) error {
+			index, err := appstatic.DistFS.ReadFile("dist/index.html")
+			if err != nil {
+				return fiber.ErrNotFound
+			}
+			c.Set(fiber.HeaderContentType, fiber.MIMETextHTMLCharsetUTF8)
+			return c.Send(index)
+		},
+	}))
 
 	return app
 }

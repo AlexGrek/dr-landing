@@ -1,0 +1,30 @@
+replicaCount: 1
+
+image:
+  repository: dr-landing
+  tag: latest
+  pullPolicy: IfNotPresent
+
+service:
+  type: ClusterIP
+  port: 80
+  targetPort: 8080
+
+ingress:
+  enabled: false
+  className: ""
+  host: dr-landing.example.com
+  tls: false
+  tlsSecret: ""
+
+persistence:
+  enabled: true
+  storageClass: ""
+  size: 1Gi
+  mountPath: /data
+
+resources: {}
+
+nodeSelector: {}
+tolerations: []
+affinity: {}

@@ -13,6 +13,8 @@
 # Build output
 /bin/
 /dist/
+/internal/static/dist/*
+!/internal/static/dist/.gitkeep
 
 # IDE
 .vscode/

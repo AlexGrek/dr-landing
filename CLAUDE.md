@@ -69,6 +69,30 @@ type Ticket struct {
 - Fiber middleware stack: logger → recover → routes
 - Graceful shutdown via os.Signal
 
+## Deployment
+
+### Docker
+Registry: `grekodocker/dr-landing` (DockerHub)
+
+```bash
+make docker-build              # build grekodocker/dr-landing:latest
+make docker-push               # push to dockerhub
+make docker-release            # build + push
+make docker-release IMAGE_TAG=1.0.0  # with specific tag
+```
+
+### Kubernetes (Helm)
+Primary deploy command — works for both first install and upgrades:
+```bash
+make helm-upgrade                          # deploy to dr-landing namespace
+make helm-upgrade HELM_RELEASE=staging     # override release name
+```
+
+- Namespace: `dr-landing` (created automatically via `--create-namespace`)
+- SQLite DB persisted via PVC mounted at `/data` (`DB_PATH=/data/tickets.db`)
+- Ingress disabled by default; enable via `--set ingress.enabled=true`
+- `make helm-template` to preview rendered manifests
+
 ## Before Making Changes
 - All endpoints use Fiber v3 and GORM patterns
 - Database changes: modify Ticket struct, restart for auto-migration

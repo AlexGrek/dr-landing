@@ -1,0 +1,11 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npx heroui-cli@latest init)"
+    ],
+    "additionalDirectories": [
+      "/Users/vedmedik/.claude/skills",
+      "/Users/vedmedik/dev/dr-landing/.claude"
+    ]
+  }
+}
