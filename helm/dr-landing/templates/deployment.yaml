@@ -24,6 +24,8 @@ spec:
           env:
             - name: DB_PATH
               value: {{ .Values.persistence.mountPath }}/tickets.db
+            - name: BASE_URL
+              value: {{ if .Values.baseUrl }}{{ .Values.baseUrl }}{{ else }}{{ if .Values.ingress.tls }}https{{ else }}http{{ end }}://{{ .Values.ingress.host }}{{ end }}
           livenessProbe:
             httpGet:
               path: /api/health

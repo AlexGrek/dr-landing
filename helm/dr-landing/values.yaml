@@ -20,6 +20,9 @@ ingress:
     cert-manager.io/cluster-issuer: letsencrypt-prod
     kubernetes.io/ingress.class: traefik
 
+# Base URL for QR code generation (derived from ingress host + TLS)
+baseUrl: "" # If empty, generated from ingress.host and ingress.tls
+
 persistence:
   enabled: true
   storageClass: ""

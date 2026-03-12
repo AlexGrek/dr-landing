@@ -4,6 +4,8 @@ import { Card, CardBody } from '@heroui/react'
 import ScrollReveal from './components/ScrollReveal'
 import MorphModal from './components/MorphModal'
 import RegisterWizard from './components/RegisterWizard'
+import VerifyRegistration from './components/VerifyRegistration'
+import AdminPanel from './components/AdminPanel'
 
 function ProgressBar() {
   const { scrollYProgress } = useScroll()
@@ -397,6 +399,19 @@ export default function App() {
   const [modalOpen, setModalOpen] = useState(false)
   const [originRect, setOriginRect] = useState(null)
   const [registered, setRegistered] = useState(false)
+
+  // Check if we're on a special route
+  const pathname = window.location.pathname
+  const verifyMatch = pathname.match(/^\/verify\/([a-zA-Z0-9-]+)$/)
+
+  if (verifyMatch) {
+    const code = verifyMatch[1]
+    return <VerifyRegistration code={code} />
+  }
+
+  if (pathname === '/birthday_is_for_me') {
+    return <AdminPanel />
+  }
 
   const openModal = (e) => {
     setOriginRect(e.currentTarget.getBoundingClientRect())
