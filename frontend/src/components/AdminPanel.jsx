@@ -1,5 +1,8 @@
 import { useState, useEffect, useRef } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
+import {
+  BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, Cell
+} from 'recharts'
 import './AdminPanel.less'
 
 function parseJSON(str) {
@@ -156,6 +159,96 @@ function GuestModal({ guest, onClose, onDelete }) {
   )
 }
 
+const CHART_CONFIGS = [
+  { key: 'drink_prefs',      label: '🍹 Drink Preferences',    color: '#ffa07a' },
+  { key: 'dress_code_prefs', label: '👔 Dress Code Preferences', color: '#87ceeb' },
+  { key: 'activity_prefs',   label: '🎯 Activity Preferences',  color: '#90ee90' },
+]
+
+function countPrefs(registrations, key) {
+  const counts = {}
+  for (const reg of registrations) {
+    const parsed = parseJSON(reg[key])
+    if (!Array.isArray(parsed)) continue
+    for (const item of parsed) {
+      counts[item] = (counts[item] || 0) + 1
+    }
+  }
+  return Object.entries(counts)
+    .map(([name, count]) => ({ name, count }))
+    .sort((a, b) => b.count - a.count)
+}
+
+function CustomTooltip({ active, payload }) {
+  if (!active || !payload?.length) return null
+  return (
+    <div className="chart-tooltip">
+      <span className="chart-tooltip-label">{payload[0].payload.name}</span>
+      <span className="chart-tooltip-count">{payload[0].value}</span>
+    </div>
+  )
+}
+
+function PrefsHistograms({ registrations }) {
+  if (!registrations.length) return null
+  return (
+    <motion.div
+      className="prefs-histograms"
+      initial={{ opacity: 0, y: 24 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ delay: 0.15 }}
+    >
+      <h2 className="histograms-title">Preference Stats</h2>
+      <div className="histograms-grid">
+        {CHART_CONFIGS.map(({ key, label, color }) => {
+          const data = countPrefs(registrations, key)
+          if (!data.length) return (
+            <div key={key} className="histogram-card">
+              <h3 className="histogram-card-title">{label}</h3>
+              <p className="histogram-empty">No data yet</p>
+            </div>
+          )
+          return (
+            <div key={key} className="histogram-card">
+              <h3 className="histogram-card-title">{label}</h3>
+              <ResponsiveContainer width="100%" height={220}>
+                <BarChart data={data} margin={{ top: 8, right: 8, left: -16, bottom: 0 }}>
+                  <XAxis
+                    dataKey="name"
+                    tick={{ fill: '#888', fontSize: 11 }}
+                    axisLine={false}
+                    tickLine={false}
+                    interval={0}
+                    angle={-20}
+                    textAnchor="end"
+                    height={48}
+                  />
+                  <YAxis
+                    allowDecimals={false}
+                    tick={{ fill: '#666', fontSize: 11 }}
+                    axisLine={false}
+                    tickLine={false}
+                  />
+                  <Tooltip content={<CustomTooltip />} cursor={{ fill: 'rgba(255,255,255,0.04)' }} />
+                  <Bar dataKey="count" radius={[4, 4, 0, 0]}>
+                    {data.map((_, i) => (
+                      <Cell
+                        key={i}
+                        fill={color}
+                        fillOpacity={1 - i * (0.55 / Math.max(data.length - 1, 1))}
+                      />
+                    ))}
+                  </Bar>
+                </BarChart>
+              </ResponsiveContainer>
+            </div>
+          )
+        })}
+      </div>
+    </motion.div>
+  )
+}
+
 export default function AdminPanel() {
   const [registrations, setRegistrations] = useState([])
   const [loading, setLoading] = useState(true)
@@ -299,6 +392,8 @@ export default function AdminPanel() {
                 ))}
               </div>
             </div>
+
+            <PrefsHistograms registrations={registrations} />
 
             <a href="/" className="back-link">← Back to Landing Page</a>
           </motion.div>

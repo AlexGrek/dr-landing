@@ -469,6 +469,74 @@
   }
 }
 
+// Preference histograms
+.prefs-histograms {
+  margin-bottom: 2rem;
+}
+
+.histograms-title {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: #fff;
+  margin: 0 0 1.25rem 0;
+}
+
+.histograms-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1.25rem;
+
+  @media (max-width: 900px) {
+    grid-template-columns: 1fr;
+  }
+}
+
+.histogram-card {
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 1rem;
+  padding: 1.25rem 1rem 0.75rem;
+}
+
+.histogram-card-title {
+  font-size: 0.88rem;
+  font-weight: 600;
+  color: #aaa;
+  margin: 0 0 0.75rem 0;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.histogram-empty {
+  color: #555;
+  font-size: 0.88rem;
+  font-style: italic;
+  margin: 0;
+  padding: 1rem 0;
+  text-align: center;
+}
+
+.chart-tooltip {
+  background: #1e1e38;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 0.5rem;
+  padding: 0.5rem 0.75rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+}
+
+.chart-tooltip-label {
+  font-size: 0.82rem;
+  color: #aaa;
+}
+
+.chart-tooltip-count {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: #fff;
+}
+
 .back-link {
   display: inline-block;
   color: #888;
