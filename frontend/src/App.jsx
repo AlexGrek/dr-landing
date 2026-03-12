@@ -3,6 +3,7 @@ import { motion, useScroll, useTransform, AnimatePresence, useInView } from 'fra
 import { Card, CardBody } from '@heroui/react'
 import ScrollReveal from './components/ScrollReveal'
 import MorphModal from './components/MorphModal'
+import RegisterWizard from './components/RegisterWizard'
 
 function ProgressBar() {
   const { scrollYProgress } = useScroll()
@@ -438,10 +439,7 @@ export default function App() {
             <p className="modal__success-sub">See you on March 22 at 15:00</p>
           </div>
         ) : (
-          <>
-            <h3 className="modal__title">Register</h3>
-            <RegisterForm onSuccess={() => setRegistered(true)} />
-          </>
+          <RegisterWizard onSuccess={() => setRegistered(true)} />
         )}
       </MorphModal>
     </div>

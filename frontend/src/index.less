@@ -154,7 +154,7 @@ body {
 
   &__scroll-hint {
     position: absolute;
-    bottom: 2.5rem;
+    bottom: 5rem;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -697,6 +697,325 @@ body {
   &__success-sub {
     color: @text-secondary;
     margin: 0;
+  }
+}
+
+// ── Registration Wizard ───────────────────────────────────────────────────────
+.wizard {
+  --stage-accent: @accent;
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+
+  &__progress {
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+    margin-bottom: 1.5rem;
+    min-height: 16px;
+  }
+
+  &__dot {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: @card-border;
+    transition: background 0.35s, transform 0.35s;
+
+    &--active {
+      background: var(--stage-accent);
+      transform: scale(1.5);
+    }
+
+    &--done {
+      background: var(--stage-accent);
+      opacity: 0.45;
+    }
+  }
+
+  &__header {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-bottom: 1.5rem;
+  }
+
+  &__icon {
+    width: 24px;
+    height: 24px;
+    flex-shrink: 0;
+    color: var(--stage-accent);
+    stroke-width: 2;
+  }
+
+  &__title {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: var(--stage-accent);
+    letter-spacing: 0.02em;
+    margin: 0;
+  }
+
+  &__body {
+    overflow-x: hidden;
+    overflow-y: visible;
+    margin-bottom: 1.25rem;
+  }
+
+  &__stage-body {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+
+  &__sublabel {
+    font-size: 0.8rem;
+    color: @text-secondary;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    margin-bottom: 0.25rem;
+    margin-top: 0.5rem;
+
+    &:first-child { margin-top: 0; }
+  }
+
+  &__textarea {
+    resize: vertical;
+    min-height: 80px;
+    font-family: inherit;
+    line-height: 1.5;
+  }
+
+  // ── Option grid (stages 2 & 3) ─────────────────────────────────────────────
+  &__options {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.55rem;
+  }
+
+  &__option {
+    display: flex;
+    align-items: center;
+    gap: 0.55rem;
+    padding: 0.65rem 0.75rem;
+    background: @card-bg;
+    border: 1.5px solid @card-border;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: border-color 0.2s, box-shadow 0.2s;
+    user-select: none;
+
+    &:hover:not(&--selected) {
+      border-color: rgba(233, 239, 186, 0.22);
+    }
+
+    &--selected {
+      border-color: var(--stage-accent);
+      box-shadow: 0 0 0 1px var(--stage-accent);
+    }
+  }
+
+  &__option-icon {
+    font-size: 1.2rem;
+    line-height: 1;
+    flex-shrink: 0;
+  }
+
+  &__option-label {
+    font-size: 0.82rem;
+    color: @text-primary;
+    font-weight: 500;
+    flex: 1;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  &__checkbox {
+    width: 17px;
+    height: 17px;
+    border-radius: 5px;
+    border: 1.5px solid @card-border;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.2s, border-color 0.2s;
+
+    .wizard__option--selected & {
+      background: var(--stage-accent);
+      border-color: var(--stage-accent);
+    }
+  }
+
+  &__check-mark {
+    color: #0d0906;
+    font-size: 0.65rem;
+    font-weight: 900;
+    line-height: 1;
+  }
+
+  // ── Time picker (stage 4) ──────────────────────────────────────────────────
+  &__times {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 0.55rem;
+    margin-bottom: 0.5rem;
+  }
+
+  &__time {
+    padding: 0.65rem 0.5rem;
+    text-align: center;
+    background: @card-bg;
+    border: 1.5px solid @card-border;
+    border-radius: 10px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: @text-secondary;
+    cursor: pointer;
+    transition: border-color 0.2s, color 0.2s, box-shadow 0.2s;
+    font-variant-numeric: tabular-nums;
+
+    &--selected {
+      border-color: var(--stage-accent);
+      color: var(--stage-accent);
+      box-shadow: 0 0 0 1px var(--stage-accent);
+    }
+
+    &:hover:not(&--selected) {
+      color: @text-primary;
+      border-color: rgba(233, 239, 186, 0.22);
+    }
+  }
+
+  // ── Review items (stage 5) ─────────────────────────────────────────────────
+  &__review {
+    display: flex;
+    flex-direction: column;
+    gap: 0.65rem;
+    margin-bottom: 0.25rem;
+  }
+
+  &__review-item {
+    display: flex;
+    flex-direction: column;
+    gap: 0.15rem;
+    padding: 0.55rem 0;
+    border-bottom: 1px solid @card-border;
+
+    &:last-child { border-bottom: none; }
+  }
+
+  &__review-label {
+    font-size: 0.68rem;
+    color: @text-secondary;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+  }
+
+  &__review-value {
+    font-size: 0.9rem;
+    color: @text-primary;
+    font-weight: 500;
+    line-height: 1.4;
+  }
+
+  // ── Navigation ─────────────────────────────────────────────────────────────
+  &__nav {
+    display: flex;
+    gap: 0.65rem;
+    padding-top: 1rem;
+    border-top: 1px solid @card-border;
+  }
+
+  &__btn {
+    flex: 1;
+    padding: 0.8rem 1.2rem;
+    border-radius: 10px;
+    font-size: 0.92rem;
+    font-weight: 700;
+    letter-spacing: 0.03em;
+    cursor: pointer;
+    border: none;
+    transition: opacity 0.2s, transform 0.15s;
+
+    &:hover:not(:disabled) {
+      opacity: 0.85;
+      transform: translateY(-1px);
+    }
+
+    &:disabled {
+      opacity: 0.35;
+      cursor: not-allowed;
+    }
+
+    &--back {
+      background: @card-bg;
+      border: 1px solid @card-border;
+      color: @text-secondary;
+      flex: 0 0 auto;
+      padding: 0.8rem 1rem;
+    }
+
+    &--next {
+      background: var(--stage-accent);
+      color: #0d0906;
+    }
+  }
+
+  // ── Submit button + loading bar ────────────────────────────────────────────
+  &__submit-wrap {
+    flex: 1;
+    position: relative;
+    height: 46px;
+    border-radius: 10px;
+    overflow: hidden;
+  }
+
+  &__submit-btn {
+    position: absolute;
+    inset: 0;
+    background: var(--stage-accent);
+    color: #0d0906;
+    font-size: 0.95rem;
+    font-weight: 800;
+    letter-spacing: 0.05em;
+    border: none;
+    cursor: pointer;
+    border-radius: 10px;
+    width: 100%;
+
+    &:hover { opacity: 0.88; }
+  }
+
+  &__loading-bar-wrap {
+    position: absolute;
+    inset: 0;
+    border-radius: 10px;
+    overflow: hidden;
+    background: @card-bg;
+  }
+
+  &__loading-bar {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(90deg, @accent-warm, var(--stage-accent));
+    transform-origin: left;
+    border-radius: 10px;
+  }
+
+  &__loading-label {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.88rem;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    color: @text-primary;
+    pointer-events: none;
+    z-index: 1;
   }
 }
 

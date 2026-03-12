@@ -21,7 +21,7 @@ COPY . .
 # Embed the built frontend
 COPY --from=frontend /app/dist ./internal/static/dist
 
-RUN CGO_ENABLED=1 GOOS=linux go build \
+RUN CGO_ENABLED=1 GOOS=linux CGO_CFLAGS="-D_LARGEFILE64_SOURCE" go build \
     -ldflags="-s -w" \
     -o bin/dr-landing \
     ./cmd/main/

@@ -11,11 +11,14 @@ service:
   targetPort: 8080
 
 ingress:
-  enabled: false
-  className: ""
-  host: dr-landing.example.com
-  tls: false
-  tlsSecret: ""
+  enabled: true
+  className: traefik
+  host: birthday.alexgr.space
+  tls: true
+  tlsSecret: birthday-alexgr-space-tls
+  annotations:
+    cert-manager.io/cluster-issuer: letsencrypt-prod
+    kubernetes.io/ingress.class: traefik
 
 persistence:
   enabled: true
