@@ -33,3 +33,7 @@
 *.log
 
 tmp
+
+# Database
+tickets.db
+data/
