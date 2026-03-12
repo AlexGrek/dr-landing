@@ -32,6 +32,31 @@ func New(version string) *fiber.App {
 
 	// Serve frontend SPA (embedded at build time)
 	distFS, _ := fs.Sub(appstatic.DistFS, "dist")
+
+	// index.html must never be cached — after a deploy, new Vite asset hashes
+	// are only referenced in the new index.html. A stale cached copy causes a
+	// blank screen until the user hard-refreshes.
+	serveIndex := func(c fiber.Ctx) error {
+		index, err := appstatic.DistFS.ReadFile("dist/index.html")
+		if err != nil {
+			return fiber.ErrNotFound
+		}
+		c.Set(fiber.HeaderContentType, fiber.MIMETextHTMLCharsetUTF8)
+		c.Set(fiber.HeaderCacheControl, "no-cache, no-store, must-revalidate")
+		c.Set("Pragma", "no-cache")
+		c.Set("Expires", "0")
+		return c.Send(index)
+	}
+	app.Get("/", serveIndex)
+	app.Get("/index.html", serveIndex)
+
+	// Vite content-hashes all filenames under /assets/, so they are safe to
+	// cache indefinitely — the hash changes whenever the content changes.
+	app.Use("/assets", func(c fiber.Ctx) error {
+		c.Set(fiber.HeaderCacheControl, "public, max-age=31536000, immutable")
+		return c.Next()
+	})
+
 	app.Use(static.New("", static.Config{
 		FS:     distFS,
 		Browse: false,
@@ -42,8 +67,9 @@ func New(version string) *fiber.App {
 				return fiber.ErrNotFound
 			}
 			c.Set(fiber.HeaderContentType, fiber.MIMETextHTMLCharsetUTF8)
-			c.Set(fiber.HeaderCacheControl, "no-cache")
+			c.Set(fiber.HeaderCacheControl, "no-cache, no-store, must-revalidate")
 			c.Set("Pragma", "no-cache")
+			c.Set("Expires", "0")
 			return c.Send(index)
 		},
 	}))
