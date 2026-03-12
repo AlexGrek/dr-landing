@@ -3,7 +3,8 @@
     "allow": [
       "Bash(npx heroui-cli@latest init)",
       "Bash(go install:*)",
-      "WebFetch(domain:www.shecodes.io)"
+      "WebFetch(domain:www.shecodes.io)",
+      "WebFetch(domain:birthday.alexgr.space)"
     ],
     "additionalDirectories": [
       "/Users/vedmedik/.claude/skills",
