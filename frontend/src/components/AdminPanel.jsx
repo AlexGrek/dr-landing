@@ -3,6 +3,8 @@ import { motion, AnimatePresence } from 'framer-motion'
 import {
   BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, Cell
 } from 'recharts'
+import { dump as yamlDump } from 'js-yaml'
+import MorphModal from './MorphModal'
 import drinkOptions from '../config/drinkOptions.json'
 import dressCodeOptions from '../config/dressCodeOptions.json'
 import activityOptions from '../config/activityOptions.json'
@@ -162,6 +164,66 @@ function GuestModal({ guest, onClose, onDelete }) {
   )
 }
 
+function YamlModal({ open, originRect, onClose, title, yaml }) {
+  const textareaRef = useRef(null)
+
+  function handleCopy() {
+    navigator.clipboard?.writeText(yaml)
+    if (textareaRef.current) {
+      textareaRef.current.select()
+    }
+  }
+
+  return (
+    <MorphModal open={open} originRect={originRect} onClose={onClose}>
+      <div className="yaml-modal">
+        <div className="yaml-modal-header">
+          <span className="yaml-modal-title">{title}</span>
+          <button className="yaml-copy-btn" onClick={handleCopy}>Copy</button>
+        </div>
+        <textarea
+          ref={textareaRef}
+          className="yaml-textarea"
+          value={yaml}
+          readOnly
+          spellCheck={false}
+        />
+      </div>
+    </MorphModal>
+  )
+}
+
+function buildGuestsYaml(registrations) {
+  const data = registrations.map(r => ({
+    name: r.name,
+    code: r.invitation_code,
+    arrival: r.arrival_time || null,
+    drinks: parseJSON(r.drink_prefs) || [],
+    dress_code: parseJSON(r.dress_code_prefs) || [],
+    activities: parseJSON(r.activity_prefs) || [],
+    notes: r.additional_info || null,
+    registered: r.created_at,
+  }))
+  return yamlDump({ guests: data }, { lineWidth: 80 })
+}
+
+function buildPrefsYaml(registrations) {
+  const data = {}
+  for (const { key, label } of CHART_CONFIGS) {
+    const counts = {}
+    for (const reg of registrations) {
+      const parsed = parseJSON(reg[key])
+      if (!Array.isArray(parsed)) continue
+      for (const item of parsed) counts[item] = (counts[item] || 0) + 1
+    }
+    // sort by count desc
+    data[label] = Object.fromEntries(
+      Object.entries(counts).sort((a, b) => b[1] - a[1])
+    )
+  }
+  return yamlDump(data, { lineWidth: 80 })
+}
+
 const GITHUB_BASE = 'https://github.com/AlexGrek/dr-landing/blob/main/frontend/src/config'
 
 const CHART_CONFIGS = [
@@ -213,7 +275,15 @@ function CustomTooltip({ active, payload }) {
 }
 
 function PrefsHistograms({ registrations }) {
+  const [yamlModal, setYamlModal] = useState({ open: false, rect: null })
+  const btnRef = useRef(null)
+
   if (!registrations.length) return null
+
+  function openYaml() {
+    setYamlModal({ open: true, rect: btnRef.current?.getBoundingClientRect() ?? null })
+  }
+
   return (
     <motion.div
       className="prefs-histograms"
@@ -221,7 +291,17 @@ function PrefsHistograms({ registrations }) {
       animate={{ opacity: 1, y: 0 }}
       transition={{ delay: 0.15 }}
     >
-      <h2 className="histograms-title">Preference Stats</h2>
+      <div className="histograms-section-header">
+        <h2 className="histograms-title">Preference Stats</h2>
+        <button ref={btnRef} className="yaml-btn" onClick={openYaml}>⬡ YAML</button>
+      </div>
+      <YamlModal
+        open={yamlModal.open}
+        originRect={yamlModal.rect}
+        onClose={() => setYamlModal(s => ({ ...s, open: false }))}
+        title="Preference Stats — YAML"
+        yaml={buildPrefsYaml(registrations)}
+      />
       <div className="histograms-grid">
         {CHART_CONFIGS.map(({ key, label, color }) => {
           const data = countPrefs(registrations, key)
@@ -326,6 +406,8 @@ export default function AdminPanel() {
   const [error, setError] = useState(null)
   const [sortBy, setSortBy] = useState('created')
   const [selected, setSelected] = useState(null)
+  const [guestsYaml, setGuestsYaml] = useState({ open: false, rect: null })
+  const guestsYamlBtnRef = useRef(null)
 
   useEffect(() => {
     const fetchRegistrations = async () => {
@@ -395,6 +477,14 @@ export default function AdminPanel() {
                 <option value="created">Sort by Date (Newest)</option>
                 <option value="name">Sort by Name</option>
               </select>
+              <button
+                ref={guestsYamlBtnRef}
+                className="yaml-btn"
+                disabled={registrations.length === 0}
+                onClick={() => setGuestsYaml({ open: true, rect: guestsYamlBtnRef.current?.getBoundingClientRect() ?? null })}
+              >
+                ⬡ YAML
+              </button>
               <ConfirmButton
                 label="🗑 Delete all"
                 confirmLabel={`Delete all ${registrations.length}`}
@@ -402,6 +492,13 @@ export default function AdminPanel() {
                 disabled={registrations.length === 0}
               />
             </div>
+            <YamlModal
+              open={guestsYaml.open}
+              originRect={guestsYaml.rect}
+              onClose={() => setGuestsYaml(s => ({ ...s, open: false }))}
+              title="All Guests — YAML"
+              yaml={buildGuestsYaml(registrations)}
+            />
 
             <div className="registrations-table">
               <div className="table-header">
