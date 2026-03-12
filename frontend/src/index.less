@@ -464,12 +464,11 @@ body {
     font-weight: 700;
     letter-spacing: 0.22em;
     text-transform: uppercase;
-    border-radius: 0; // sharp Japanese corners
+    border-radius: 0;
     position: relative;
     overflow: hidden;
     transition: color 0.25s;
 
-    // fill slides in on hover
     &::before {
       content: '';
       position: absolute;
@@ -481,19 +480,10 @@ body {
       z-index: 0;
     }
 
-    &:hover::before {
-      transform: scaleX(1);
-    }
+    &:hover::before { transform: scaleX(1); }
+    &:hover { color: @jp-white; }
 
-    &:hover {
-      color: @jp-white;
-    }
-
-    // all children sit above the fill
-    span {
-      position: relative;
-      z-index: 1;
-    }
+    span { position: relative; z-index: 1; }
   }
 
   &__maps-icon {
@@ -1052,6 +1042,14 @@ body {
     text-transform: uppercase;
   }
 
+  &__subtitle {
+    font-size: 0.72rem;
+    color: @text-secondary;
+    opacity: 0.5;
+    margin: -0.4rem 0 0;
+    letter-spacing: 0.06em;
+  }
+
   &__qr-wrapper {
     display: flex;
     justify-content: center;
@@ -1069,6 +1067,13 @@ body {
     height: 160px;
     display: block;
     border-radius: 4px;
+
+    &--downloadable {
+      cursor: pointer;
+      transition: opacity 0.15s;
+      &:hover { opacity: 0.8; }
+      &:active { opacity: 0.6; }
+    }
   }
 
   &__details {
@@ -1129,8 +1134,8 @@ body {
     align-items: center;
     gap: 0.4rem;
     padding: 0.55rem 1.1rem;
-    border: 1px solid fadeout(@card-border, 20%);
-    background: transparent;
+    border: 1px solid rgba(233, 239, 186, 0.28);
+    background: rgba(233, 239, 186, 0.04);
     color: @text-secondary;
     font-size: 0.75rem;
     font-weight: 600;
@@ -1143,10 +1148,20 @@ body {
     font-family: inherit;
 
     &:hover {
-      border-color: @text-primary;
+      border-color: rgba(233, 239, 186, 0.6);
       color: @text-primary;
-      background: fadeout(@card-border, 80%);
+      background: rgba(233, 239, 186, 0.08);
     }
+  }
+
+  &__notice {
+    font-size: 0.68rem;
+    color: @text-secondary;
+    opacity: 0.4;
+    text-align: center;
+    line-height: 1.6;
+    margin: 0;
+    letter-spacing: 0.03em;
   }
 }
 
@@ -1158,4 +1173,99 @@ body {
   font-size: 1rem;
   border-top: 1px solid @card-border;
   background: @bg-primary;
+
+  &__tagline {
+    font-size: clamp(0.8rem, 2.5vw, 1.1rem);
+    letter-spacing: 0.55em;
+    text-transform: uppercase;
+    line-height: 1;
+    margin: 0;
+    user-select: none;
+    display: flex;
+    justify-content: center;
+    gap: 0.06em;
+    flex-wrap: wrap;
+  }
+
+  &__tagline-letter {
+    display: inline-block;
+    background: linear-gradient(
+      105deg,
+      rgba(255, 255, 255, 0.06) 0%,
+      rgba(255, 255, 255, 0.28) 40%,
+      rgba(255, 255, 255, 0.06) 80%
+    );
+    background-size: 300% auto;
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    animation: none;
+
+    &--space {
+      width: 0.35em;
+    }
+  }
+
+  @keyframes footer-shimmer {
+    0%   { background-position: 200% center; }
+    100% { background-position: -100% center; }
+  }
+}
+
+.footer-contact {
+  background: #000;
+  padding: 2rem 2rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.6rem;
+
+  &__row {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+    justify-content: center;
+
+    @media (max-width: 599px) {
+      flex-direction: column;
+      gap: 0.45rem;
+    }
+  }
+
+  &__item {
+    font-family: inherit;
+    font-size: 0.78rem;
+    font-variant: small-caps;
+    color: rgba(255, 255, 255, 0.45);
+    text-decoration: none;
+    letter-spacing: 0.08em;
+    transition: color 0.2s;
+
+    &[href]:hover {
+      color: rgba(255, 255, 255, 0.72);
+    }
+
+    &--icon {
+      display: flex;
+      align-items: center;
+
+      svg {
+        width: 16px;
+        height: 16px;
+      }
+    }
+  }
+
+  &__dot {
+    font-family: inherit;
+    font-size: 1.4rem;
+    line-height: 1;
+    color: rgba(255, 255, 255, 0.22);
+    user-select: none;
+
+    @media (max-width: 599px) {
+      display: none;
+    }
+  }
 }

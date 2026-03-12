@@ -51,7 +51,8 @@ export default function TicketConfirmation({ data }) {
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
       >
-        <h3 className="ticket-confirmation__title">Take a screenshot!</h3>
+        <h3 className="ticket-confirmation__title">Your ticket</h3>
+        <p className="ticket-confirmation__subtitle">take a screenshot</p>
       </motion.div>
 
       {/* QR Code with appearance animation */}
@@ -66,7 +67,14 @@ export default function TicketConfirmation({ data }) {
             <img
               src={qrUrl}
               alt="Ticket QR Code"
-              className="ticket-confirmation__qr"
+              className="ticket-confirmation__qr ticket-confirmation__qr--downloadable"
+              title="Click to download"
+              onClick={() => {
+                const a = document.createElement('a')
+                a.href = qrUrl
+                a.download = `ticket-${data.invitationCode}.png`
+                a.click()
+              }}
             />
           )}
         </div>
@@ -131,6 +139,17 @@ export default function TicketConfirmation({ data }) {
           📅 Add to Calendar
         </button>
       </motion.div>
+
+      <motion.p
+        className="ticket-confirmation__notice"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 0.5, delay: 0.9 }}
+      >
+        Ticket is required to visit the event.
+        <br />
+        Every ticket is unique — do not share.
+      </motion.p>
     </div>
   )
 }
