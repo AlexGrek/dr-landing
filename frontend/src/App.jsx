@@ -247,12 +247,12 @@ function LocationSection() {
           <h2 className="location__name">Wabi Sabi Space</h2>
           <div className="location__rule" />
           <p className="location__address">
-            Kyiv, Livy Bereg<br />Zhk Slavutych 2.0<br />вул. Зарічна, 6
+            Kyiv, Livy Bereg<br />Zhk Slavutych 2.0<br />вул. Зарічна, 6, корпус 4
           </p>
           <p className="location__date">22 March · 15:00</p>
           <a
             className="location__maps-btn"
-            href="https://www.google.com/maps/search/вул.+Зарічна+6+Київ"
+            href="https://maps.app.goo.gl/bEvJxmD1Wt1GffAP9"
             target="_blank"
             rel="noopener noreferrer"
           >

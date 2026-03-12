@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react'
 import { motion } from 'framer-motion'
 import './VerifyRegistration.less'
 
-const MAPS_URL = 'https://www.google.com/maps/search/вул.+Зарічна+6+Київ'
+const MAPS_URL = 'https://maps.app.goo.gl/bEvJxmD1Wt1GffAP9'
 
 function downloadCalendar(arrivalTime) {
   const t = (arrivalTime || '15:00').replace(':', '')
@@ -14,7 +14,7 @@ function downloadCalendar(arrivalTime) {
     `DTSTART:20260322T${t}00`,
     'DTEND:20260322T230000',
     'SUMMARY:Birthday Party 3.0',
-    'LOCATION:Wabi Sabi Space\\, вул. Зарічна 6\\, Kyiv',
+    'LOCATION:Wabi Sabi Space\\, вул. Зарічна 6\\, корпус 4\\, Kyiv',
     'DESCRIPTION:You are invited to Birthday Party 3.0!',
     'END:VEVENT',
     'END:VCALENDAR',
@@ -204,7 +204,7 @@ export default function VerifyRegistration({ code }) {
                 <h3 className="section-title">Location</h3>
                 <p className="verify-address">
                   Wabi Sabi Space<br />
-                  Zhk Slavutych 2.0, вул. Зарічна, 6<br />
+                  Zhk Slavutych 2.0, вул. Зарічна, 6, корпус 4<br />
                   Kyiv
                 </p>
               </div>
