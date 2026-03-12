@@ -2,6 +2,32 @@ import { useState, useEffect } from 'react'
 import { motion } from 'framer-motion'
 import './VerifyRegistration.less'
 
+const MAPS_URL = 'https://www.google.com/maps/search/вул.+Зарічна+6+Київ'
+
+function downloadCalendar(arrivalTime) {
+  const t = (arrivalTime || '15:00').replace(':', '')
+  const ics = [
+    'BEGIN:VCALENDAR',
+    'VERSION:2.0',
+    'PRODID:-//Birthday Party 3.0//EN',
+    'BEGIN:VEVENT',
+    `DTSTART:20260322T${t}00`,
+    'DTEND:20260322T230000',
+    'SUMMARY:Birthday Party 3.0',
+    'LOCATION:Wabi Sabi Space\\, вул. Зарічна 6\\, Kyiv',
+    'DESCRIPTION:You are invited to Birthday Party 3.0!',
+    'END:VEVENT',
+    'END:VCALENDAR',
+  ].join('\r\n')
+  const blob = new Blob([ics], { type: 'text/calendar' })
+  const url = URL.createObjectURL(blob)
+  const a = document.createElement('a')
+  a.href = url
+  a.download = 'birthday-party-3.0.ics'
+  a.click()
+  URL.revokeObjectURL(url)
+}
+
 const DRINK_OPTIONS = [
   { id: 'wine',      label: 'Wine',        icon: '🍷' },
   { id: 'cocktails', label: 'Cocktails',   icon: '🍸' },
@@ -173,6 +199,32 @@ export default function VerifyRegistration({ code }) {
                   <p className="avatar">{registration.avatar}</p>
                 </div>
               )}
+
+              <div className="card-section">
+                <h3 className="section-title">Location</h3>
+                <p className="verify-address">
+                  Wabi Sabi Space<br />
+                  Zhk Slavutych 2.0, вул. Зарічна, 6<br />
+                  Kyiv
+                </p>
+              </div>
+            </div>
+
+            <div className="verify-actions">
+              <a
+                className="verify-action-btn"
+                href={MAPS_URL}
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                ⛩ Google Maps
+              </a>
+              <button
+                className="verify-action-btn"
+                onClick={() => downloadCalendar(registration.arrival_time)}
+              >
+                📅 Add to Calendar
+              </button>
             </div>
 
             <a href="/" className="back-link">← Back to Landing Page</a>

@@ -1,6 +1,32 @@
 import { useState, useEffect } from 'react'
 import { motion } from 'framer-motion'
 
+const MAPS_URL = 'https://www.google.com/maps/search/вул.+Зарічна+6+Київ'
+
+function downloadCalendar(arrivalTime) {
+  const t = (arrivalTime || '15:00').replace(':', '')
+  const ics = [
+    'BEGIN:VCALENDAR',
+    'VERSION:2.0',
+    'PRODID:-//Birthday Party 3.0//EN',
+    'BEGIN:VEVENT',
+    `DTSTART:20260322T${t}00`,
+    'DTEND:20260322T230000',
+    'SUMMARY:Birthday Party 3.0',
+    'LOCATION:Wabi Sabi Space\\, вул. Зарічна 6\\, Kyiv',
+    'DESCRIPTION:You are invited to Birthday Party 3.0!',
+    'END:VEVENT',
+    'END:VCALENDAR',
+  ].join('\r\n')
+  const blob = new Blob([ics], { type: 'text/calendar' })
+  const url = URL.createObjectURL(blob)
+  const a = document.createElement('a')
+  a.href = url
+  a.download = 'birthday-party-3.0.ics'
+  a.click()
+  URL.revokeObjectURL(url)
+}
+
 export default function TicketConfirmation({ data }) {
   const [qrUrl, setQrUrl] = useState(null)
   const guestNames = [data.name, ...(data.partners || [])].filter(Boolean)
@@ -81,6 +107,29 @@ export default function TicketConfirmation({ data }) {
             ))}
           </span>
         </div>
+      </motion.div>
+
+      {/* Action buttons */}
+      <motion.div
+        className="ticket-confirmation__actions"
+        initial={{ opacity: 0, y: 10 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5, delay: 0.6, ease: [0.22, 1, 0.36, 1] }}
+      >
+        <a
+          className="ticket-confirmation__action-btn"
+          href={MAPS_URL}
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          ⛩ Google Maps
+        </a>
+        <button
+          className="ticket-confirmation__action-btn"
+          onClick={() => downloadCalendar(data.arrivalTime)}
+        >
+          📅 Add to Calendar
+        </button>
       </motion.div>
     </div>
   )

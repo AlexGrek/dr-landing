@@ -1099,6 +1099,39 @@ body {
     font-size: 0.82rem;
     color: @text-secondary;
   }
+
+  &__actions {
+    display: flex;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+    justify-content: center;
+    margin-top: 0.25rem;
+  }
+
+  &__action-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.55rem 1.1rem;
+    border: 1px solid fadeout(@card-border, 20%);
+    background: transparent;
+    color: @text-secondary;
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    text-decoration: none;
+    border-radius: 2px;
+    cursor: pointer;
+    transition: border-color 0.2s, color 0.2s, background 0.2s;
+    font-family: inherit;
+
+    &:hover {
+      border-color: @text-primary;
+      color: @text-primary;
+      background: fadeout(@card-border, 80%);
+    }
+  }
 }
 
 // ── Footer ───────────────────────────────────────────────────────────────────

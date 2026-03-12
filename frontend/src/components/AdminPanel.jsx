@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import './AdminPanel.less'
 
@@ -7,10 +7,66 @@ function parseJSON(str) {
   try { return JSON.parse(str) } catch { return str }
 }
 
+// Inline two-step confirmation button — no modals, no browser dialogs
+function ConfirmButton({ label, confirmLabel, onConfirm, disabled, className }) {
+  const [confirming, setConfirming] = useState(false)
+  const [busy, setBusy] = useState(false)
+  const timerRef = useRef(null)
+
+  function handleFirst(e) {
+    e.stopPropagation()
+    setConfirming(true)
+    timerRef.current = setTimeout(() => setConfirming(false), 3000)
+  }
+
+  async function handleConfirm(e) {
+    e.stopPropagation()
+    clearTimeout(timerRef.current)
+    setConfirming(false)
+    setBusy(true)
+    try { await onConfirm() } finally { setBusy(false) }
+  }
+
+  function handleCancel(e) {
+    e.stopPropagation()
+    clearTimeout(timerRef.current)
+    setConfirming(false)
+  }
+
+  useEffect(() => () => clearTimeout(timerRef.current), [])
+
+  if (confirming) {
+    return (
+      <span className={`confirm-btn-group ${className || ''}`}>
+        <button className="confirm-btn confirm-btn--yes" onClick={handleConfirm}>
+          {confirmLabel || 'Confirm'}
+        </button>
+        <button className="confirm-btn confirm-btn--no" onClick={handleCancel}>
+          Cancel
+        </button>
+      </span>
+    )
+  }
+
+  return (
+    <button
+      className={`delete-btn ${className || ''}`}
+      onClick={handleFirst}
+      disabled={disabled || busy}
+    >
+      {busy ? 'Deleting…' : label}
+    </button>
+  )
+}
+
 function PrefsDetail({ label, value, emoji }) {
   const parsed = parseJSON(value)
   if (!parsed) return null
-  const items = Array.isArray(parsed) ? parsed : typeof parsed === 'object' ? Object.entries(parsed).map(([k, v]) => `${k}: ${v}`) : [String(parsed)]
+  const items = Array.isArray(parsed)
+    ? parsed
+    : typeof parsed === 'object'
+    ? Object.entries(parsed).map(([k, v]) => `${k}: ${v}`)
+    : [String(parsed)]
   if (!items.length) return null
   return (
     <div className="guest-detail-row">
@@ -23,19 +79,11 @@ function PrefsDetail({ label, value, emoji }) {
 }
 
 function GuestModal({ guest, onClose, onDelete }) {
-  const [deleting, setDeleting] = useState(false)
-
-  async function handleDelete() {
-    if (!confirm(`Delete registration for ${guest.name}?`)) return
-    setDeleting(true)
-    try {
-      const res = await fetch(`/api/registrations/${guest.id}`, { method: 'DELETE' })
-      if (!res.ok) throw new Error('Failed')
-      onDelete(guest.id)
-      onClose()
-    } catch {
-      setDeleting(false)
-    }
+  async function doDelete() {
+    const res = await fetch(`/api/registrations/${guest.id}`, { method: 'DELETE' })
+    if (!res.ok) throw new Error('Failed')
+    onDelete(guest.id)
+    onClose()
   }
 
   return (
@@ -97,9 +145,11 @@ function GuestModal({ guest, onClose, onDelete }) {
         </div>
 
         <div className="guest-modal-footer">
-          <button className="delete-btn" onClick={handleDelete} disabled={deleting}>
-            {deleting ? 'Deleting...' : '🗑 Delete guest'}
-          </button>
+          <ConfirmButton
+            label="🗑 Delete guest"
+            confirmLabel="Yes, delete"
+            onConfirm={doDelete}
+          />
         </div>
       </motion.div>
     </motion.div>
@@ -139,6 +189,12 @@ export default function AdminPanel() {
     setRegistrations(prev => prev.filter(r => r.id !== id))
   }
 
+  async function doDeleteAll() {
+    const res = await fetch('/api/registrations', { method: 'DELETE' })
+    if (!res.ok) throw new Error('Failed')
+    setRegistrations([])
+  }
+
   return (
     <div className="admin-page">
       <div className="admin-container">
@@ -175,6 +231,12 @@ export default function AdminPanel() {
                 <option value="created">Sort by Date (Newest)</option>
                 <option value="name">Sort by Name</option>
               </select>
+              <ConfirmButton
+                label="🗑 Delete all"
+                confirmLabel={`Delete all ${registrations.length}`}
+                onConfirm={doDeleteAll}
+                disabled={registrations.length === 0}
+              />
             </div>
 
             <div className="registrations-table">

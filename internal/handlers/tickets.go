@@ -110,6 +110,13 @@ func GetAllRegistrations(c fiber.Ctx) error {
 	})
 }
 
+func DeleteAllRegistrations(c fiber.Ctx) error {
+	if err := database.DB.Where("1 = 1").Delete(&database.Registration{}).Error; err != nil {
+		return c.Status(500).JSON(fiber.Map{"error": "Failed to delete registrations"})
+	}
+	return c.JSON(fiber.Map{"success": true})
+}
+
 func DeleteRegistration(c fiber.Ctx) error {
 	id := c.Params("id")
 	result := database.DB.Delete(&database.Registration{}, id)
