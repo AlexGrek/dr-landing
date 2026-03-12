@@ -62,6 +62,11 @@ body {
 }
 
 // ── Register button (shared base) ────────────────────────────────────────────
+@keyframes btn-breathe {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(217, 175, 93, 0); transform: scale(1); }
+  50%       { box-shadow: 0 0 18px 6px rgba(217, 175, 93, 0.28); transform: scale(1.025); }
+}
+
 .register-btn {
   display: block;
   width: 100%;
@@ -76,8 +81,10 @@ body {
   cursor: pointer;
   transition: box-shadow 0.2s, transform 0.15s, filter 0.2s;
   white-space: nowrap;
+  animation: btn-breathe 3s ease-in-out infinite;
 
   &:hover:not(:disabled) {
+    animation: none;
     transform: translateY(-2px);
     filter: brightness(1.12);
     box-shadow: 0 6px 28px rgba(217, 175, 93, 0.45);
@@ -86,6 +93,7 @@ body {
   &:disabled {
     opacity: 0.4;
     cursor: not-allowed;
+    animation: none;
   }
 }
 
