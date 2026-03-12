@@ -68,7 +68,7 @@ vendor:
 	@go mod vendor
 
 docker-build:
-	docker buildx build --platform linux/amd64 -t $(IMAGE) --load --build-arg FRONTEND_CACHE_BUST=$(shell git rev-parse HEAD) .
+	docker buildx build --platform linux/amd64 -t $(IMAGE) --build-arg FRONTEND_CACHE_BUST=$(shell git rev-parse HEAD) --output type=oci,dest=./dist-image .
 
 docker-push:
 	docker push $(IMAGE)
