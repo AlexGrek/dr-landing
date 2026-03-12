@@ -194,15 +194,18 @@ function CountdownSection() {
         {entries.map(({ label, val }, i) => (
           <ScrollReveal key={label} delay={i * 0.08}>
             <div className="countdown__item">
-              <motion.span
-                className="countdown__number"
-                key={val}
-                initial={{ y: -10, opacity: 0 }}
-                animate={{ y: 0, opacity: 1 }}
-                transition={{ duration: 0.25 }}
-              >
-                {String(val).padStart(2, '0')}
-              </motion.span>
+              <AnimatePresence mode="popLayout">
+                <motion.span
+                  className="countdown__number"
+                  key={val}
+                  initial={{ y: 8, opacity: 0 }}
+                  animate={{ y: 0, opacity: 1 }}
+                  exit={{ y: -8, opacity: 0 }}
+                  transition={{ duration: 0.4, ease: 'easeInOut' }}
+                >
+                  {String(val).padStart(2, '0')}
+                </motion.span>
+              </AnimatePresence>
               <span className="countdown__label">{label}</span>
             </div>
           </ScrollReveal>

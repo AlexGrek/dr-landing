@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { Users, Wine, Music, Clock, CheckCircle2 } from 'lucide-react'
+import { Users, Wine, Music, Shirt, Clock, CheckCircle2 } from 'lucide-react'
 
 const MAX_GUESTS = 8
 
@@ -8,6 +8,7 @@ const STAGES = [
   { Icon: Users, title: "Who's coming?",       accent: '#d9af5d' },
   { Icon: Wine, title: 'Food & Drinks',        accent: '#5dc4d9' },
   { Icon: Music, title: 'Activities',          accent: '#b05dd9' },
+  { Icon: Shirt, title: 'Dress Code',          accent: '#e8a87c' },
   { Icon: Clock, title: 'Arrival',             accent: '#e07a5f' },
   { Icon: CheckCircle2, title: 'Almost there!', accent: '#cede48' },
 ]
@@ -34,6 +35,17 @@ const ACTIVITY_OPTIONS = [
   { id: 'chill',       label: 'Chill Zone',  icon: '🛋️' },
   { id: 'billiards',   label: 'Billiards',   icon: '🎱' },
   { id: 'rooftop',     label: 'Rooftop',     icon: '🌙' },
+]
+
+const DRESS_CODE_OPTIONS = [
+  { id: 'casual',       label: 'Casual',        icon: '👕' },
+  { id: 'smart_casual', label: 'Smart Casual',  icon: '👔' },
+  { id: 'cocktail',     label: 'Cocktail',      icon: '🥂' },
+  { id: 'formal',       label: 'Formal',        icon: '🎩' },
+  { id: 'black_tie',    label: 'Black Tie',     icon: '🤵' },
+  { id: 'theme',        label: 'Theme Costume', icon: '🎭' },
+  { id: 'streetwear',   label: 'Streetwear',    icon: '🧢' },
+  { id: 'colorful',     label: 'Colorful',      icon: '🌈' },
 ]
 
 const ARRIVAL_TIMES = ['15:00', '15:30', '16:00', '16:30', '17:00', '17:30', '18:00', '18:30', '19:00']
@@ -227,6 +239,7 @@ export default function RegisterWizard({ onSuccess }) {
   const [partners, setPartners] = useState([])
   const [drinkPrefs, setDrinkPrefs] = useState([])
   const [activityPrefs, setActivityPrefs] = useState([])
+  const [dressCodePrefs, setDressCodePrefs] = useState([])
   const [arrivalTime, setArrivalTime] = useState('15:00')
   const [additionalInfo, setAdditionalInfo] = useState('')
 
@@ -250,6 +263,12 @@ export default function RegisterWizard({ onSuccess }) {
         ? activityPrefs.map(id => ACTIVITY_OPTIONS.find(o => o.id === id)?.label).join(', ')
         : 'No preference',
     },
+    {
+      label: 'Dress Code',
+      value: dressCodePrefs.length
+        ? dressCodePrefs.map(id => DRESS_CODE_OPTIONS.find(o => o.id === id)?.label).join(', ')
+        : 'No preference',
+    },
     { label: 'Arrival time', value: arrivalTime },
     ...(additionalInfo.trim()
       ? [{ label: 'Additional info', value: additionalInfo }]
@@ -257,7 +276,7 @@ export default function RegisterWizard({ onSuccess }) {
   ]
 
   useEffect(() => {
-    if (stage !== 5) return
+    if (stage !== 6) return
     const timers = reviewItems.map((_, i) =>
       setTimeout(() => setVisibleReview(prev => [...prev, i]), i * 700)
     )
@@ -266,7 +285,7 @@ export default function RegisterWizard({ onSuccess }) {
 
   const goNext = () => { setDirection(1); setStage(s => s + 1) }
   const goBack = () => {
-    if (stage === 5) setVisibleReview([])
+    if (stage === 6) setVisibleReview([])
     setDirection(-1)
     setStage(s => s - 1)
   }
@@ -280,6 +299,7 @@ export default function RegisterWizard({ onSuccess }) {
         arrival_time: arrivalTime,
         drink_prefs: JSON.stringify(drinkPrefs),
         activity_prefs: JSON.stringify(activityPrefs),
+        dress_code_prefs: JSON.stringify(dressCodePrefs),
         additional_info: additionalInfo,
       }
       const res = await fetch('/api/register', {
@@ -359,12 +379,19 @@ export default function RegisterWizard({ onSuccess }) {
               />
             )}
             {stage === 4 && (
+              <OptionGrid
+                options={DRESS_CODE_OPTIONS}
+                selected={dressCodePrefs}
+                onToggle={id => toggle(dressCodePrefs, setDressCodePrefs, id)}
+              />
+            )}
+            {stage === 5 && (
               <Stage4
                 arrivalTime={arrivalTime} setArrivalTime={setArrivalTime}
                 additionalInfo={additionalInfo} setAdditionalInfo={setAdditionalInfo}
               />
             )}
-            {stage === 5 && (
+            {stage === 6 && (
               <Stage5 reviewItems={reviewItems} visibleReview={visibleReview} />
             )}
           </motion.div>
@@ -380,13 +407,13 @@ export default function RegisterWizard({ onSuccess }) {
             disabled={submitting}
           >← Back</button>
         )}
-        {stage < 5 ? (
+        {stage < 6 ? (
           <button
             className="wizard__btn wizard__btn--next"
             onClick={goNext}
             disabled={!canNext}
           >
-            {stage === 4 ? 'Review →' : 'Next →'}
+            {stage === 5 ? 'Review →' : 'Next →'}
           </button>
         ) : (
           <SubmitButton submitting={submitting} onSubmit={handleSubmit} />

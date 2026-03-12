@@ -96,7 +96,6 @@ make helm-template                       # preview rendered manifests
 ```
 
 - SQLite persisted via PVC at `/data/tickets.db`
-- Admin panel: `/birthday_is_for_me`
 - Ticket verify: `/verify/:code`
 
 ## License
