@@ -1,51 +1,19 @@
 import { useState, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Users, Wine, Music, Shirt, Clock, CheckCircle2 } from 'lucide-react'
+import DRINK_OPTIONS from '../config/drinkOptions.json'
+import ACTIVITY_OPTIONS from '../config/activityOptions.json'
+import DRESS_CODE_OPTIONS from '../config/dressCodeOptions.json'
 
 const MAX_GUESTS = 8
 
 const STAGES = [
   { Icon: Users, title: "Who's coming?",       accent: '#d9af5d' },
   { Icon: Wine, title: 'Food & Drinks',        accent: '#5dc4d9' },
-  { Icon: Music, title: 'Activities',          accent: '#b05dd9' },
-  { Icon: Shirt, title: 'Dress Code',          accent: '#e8a87c' },
+  { Icon: Music, title: 'Preferred Activities', accent: '#b05dd9' },
+  { Icon: Shirt, title: 'Preferred Dress Code', accent: '#e8a87c' },
   { Icon: Clock, title: 'Arrival',             accent: '#e07a5f' },
   { Icon: CheckCircle2, title: 'Almost there!', accent: '#cede48' },
-]
-
-const DRINK_OPTIONS = [
-  { id: 'wine',      label: 'Wine',        icon: '🍷' },
-  { id: 'cocktails', label: 'Cocktails',   icon: '🍸' },
-  { id: 'beer',      label: 'Beer',        icon: '🍺' },
-  { id: 'champagne', label: 'Champagne',   icon: '🥂' },
-  { id: 'soft',      label: 'Soft drinks', icon: '🧃' },
-  { id: 'noalcohol', label: 'No alcohol',  icon: '🚫' },
-  { id: 'pizza',     label: 'Pizza',       icon: '🍕' },
-  { id: 'sushi',     label: 'Sushi',       icon: '🍣' },
-  { id: 'sweets',    label: 'Sweets',      icon: '🧁' },
-  { id: 'salads',    label: 'Salads',      icon: '🥗' },
-]
-
-const ACTIVITY_OPTIONS = [
-  { id: 'dancing',     label: 'Dancing',     icon: '💃' },
-  { id: 'live_music',  label: 'Live Music',  icon: '🎵' },
-  { id: 'board_games', label: 'Board Games', icon: '🎲' },
-  { id: 'karaoke',     label: 'Karaoke',     icon: '🎤' },
-  { id: 'photo_booth', label: 'Photo Booth', icon: '📸' },
-  { id: 'chill',       label: 'Chill Zone',  icon: '🛋️' },
-  { id: 'billiards',   label: 'Billiards',   icon: '🎱' },
-  { id: 'rooftop',     label: 'Rooftop',     icon: '🌙' },
-]
-
-const DRESS_CODE_OPTIONS = [
-  { id: 'casual',       label: 'Casual',        icon: '👕' },
-  { id: 'smart_casual', label: 'Smart Casual',  icon: '👔' },
-  { id: 'cocktail',     label: 'Cocktail',      icon: '🥂' },
-  { id: 'formal',       label: 'Formal',        icon: '🎩' },
-  { id: 'black_tie',    label: 'Black Tie',     icon: '🤵' },
-  { id: 'theme',        label: 'Theme Costume', icon: '🎭' },
-  { id: 'streetwear',   label: 'Streetwear',    icon: '🧢' },
-  { id: 'colorful',     label: 'Colorful',      icon: '🌈' },
 ]
 
 const ARRIVAL_TIMES = ['15:00', '15:30', '16:00', '16:30', '17:00', '17:30', '18:00', '18:30', '19:00']
@@ -109,29 +77,27 @@ function Stage1({ primaryName, setPrimaryName, partners, setPartners }) {
           onClick={() => setPartners(p => [...p, ''])}
         >
           + Add partner
-          <span className="tickets__add-count">{1 + partners.length}/{MAX_GUESTS}</span>
         </button>
       )}
     </div>
   )
 }
 
-// ── Stage 2 & 3: Option checkboxes ────────────────────────────────────────────
+// ── Stage 2, 3, 4: Option checkboxes ──────────────────────────────────────────
 function OptionGrid({ options, selected, onToggle }) {
   return (
     <div className="wizard__options-wrap">
       <span className="wizard__select-hint">select multiple</span>
       <div className="wizard__options">
-        {options.map(({ id, label, icon }) => {
-          const on = selected.includes(id)
+        {options.map(opt => {
+          const on = selected.includes(opt)
           return (
             <div
-              key={id}
+              key={opt}
               className={`wizard__option${on ? ' wizard__option--selected' : ''}`}
-              onClick={() => onToggle(id)}
+              onClick={() => onToggle(opt)}
             >
-              <span className="wizard__option-icon">{icon}</span>
-              <span className="wizard__option-label">{label}</span>
+              <span className="wizard__option-label">{opt}</span>
               <div className="wizard__checkbox">
                 {on && <span className="wizard__check-mark">✓</span>}
               </div>
@@ -143,8 +109,8 @@ function OptionGrid({ options, selected, onToggle }) {
   )
 }
 
-// ── Stage 4: Arrival time + textarea ──────────────────────────────────────────
-function Stage4({ arrivalTime, setArrivalTime, additionalInfo, setAdditionalInfo }) {
+// ── Stage 5: Arrival time + textarea ──────────────────────────────────────────
+function Stage5Arrival({ arrivalTime, setArrivalTime, additionalInfo, setAdditionalInfo }) {
   return (
     <div className="wizard__stage-body">
       <p className="wizard__sublabel">When will you arrive?</p>
@@ -169,8 +135,8 @@ function Stage4({ arrivalTime, setArrivalTime, additionalInfo, setAdditionalInfo
   )
 }
 
-// ── Stage 5: Review ───────────────────────────────────────────────────────────
-function Stage5({ reviewItems, visibleReview }) {
+// ── Stage 6: Review ───────────────────────────────────────────────────────────
+function Stage6Review({ reviewItems, visibleReview }) {
   return (
     <div className="wizard__review">
       {reviewItems.map((item, i) => (
@@ -243,8 +209,8 @@ export default function RegisterWizard({ onSuccess }) {
   const [arrivalTime, setArrivalTime] = useState('15:00')
   const [additionalInfo, setAdditionalInfo] = useState('')
 
-  const toggle = (arr, setArr, id) =>
-    setArr(arr.includes(id) ? arr.filter(x => x !== id) : [...arr, id])
+  const toggle = (arr, setArr, val) =>
+    setArr(arr.includes(val) ? arr.filter(x => x !== val) : [...arr, val])
 
   const reviewItems = [
     {
@@ -253,21 +219,15 @@ export default function RegisterWizard({ onSuccess }) {
     },
     {
       label: 'Food & Drinks',
-      value: drinkPrefs.length
-        ? drinkPrefs.map(id => DRINK_OPTIONS.find(o => o.id === id)?.label).join(', ')
-        : 'No preference',
+      value: drinkPrefs.length ? drinkPrefs.join(', ') : 'No preference',
     },
     {
-      label: 'Activities',
-      value: activityPrefs.length
-        ? activityPrefs.map(id => ACTIVITY_OPTIONS.find(o => o.id === id)?.label).join(', ')
-        : 'No preference',
+      label: 'Preferred Activities',
+      value: activityPrefs.length ? activityPrefs.join(', ') : 'No preference',
     },
     {
-      label: 'Dress Code',
-      value: dressCodePrefs.length
-        ? dressCodePrefs.map(id => DRESS_CODE_OPTIONS.find(o => o.id === id)?.label).join(', ')
-        : 'No preference',
+      label: 'Preferred Dress Code',
+      value: dressCodePrefs.length ? dressCodePrefs.join(', ') : 'No preference',
     },
     { label: 'Arrival time', value: arrivalTime },
     ...(additionalInfo.trim()
@@ -368,31 +328,31 @@ export default function RegisterWizard({ onSuccess }) {
               <OptionGrid
                 options={DRINK_OPTIONS}
                 selected={drinkPrefs}
-                onToggle={id => toggle(drinkPrefs, setDrinkPrefs, id)}
+                onToggle={val => toggle(drinkPrefs, setDrinkPrefs, val)}
               />
             )}
             {stage === 3 && (
               <OptionGrid
                 options={ACTIVITY_OPTIONS}
                 selected={activityPrefs}
-                onToggle={id => toggle(activityPrefs, setActivityPrefs, id)}
+                onToggle={val => toggle(activityPrefs, setActivityPrefs, val)}
               />
             )}
             {stage === 4 && (
               <OptionGrid
                 options={DRESS_CODE_OPTIONS}
                 selected={dressCodePrefs}
-                onToggle={id => toggle(dressCodePrefs, setDressCodePrefs, id)}
+                onToggle={val => toggle(dressCodePrefs, setDressCodePrefs, val)}
               />
             )}
             {stage === 5 && (
-              <Stage4
+              <Stage5Arrival
                 arrivalTime={arrivalTime} setArrivalTime={setArrivalTime}
                 additionalInfo={additionalInfo} setAdditionalInfo={setAdditionalInfo}
               />
             )}
             {stage === 6 && (
-              <Stage5 reviewItems={reviewItems} visibleReview={visibleReview} />
+              <Stage6Review reviewItems={reviewItems} visibleReview={visibleReview} />
             )}
           </motion.div>
         </AnimatePresence>
