@@ -1,15 +1,22 @@
-// Variables
-@bg-primary: #0a0a0f;
-@bg-secondary: #12121a;
-@text-primary: #f0f0f5;
-@text-secondary: #a0a0b0;
-@accent: #8b5cf6;
-@accent-glow: rgba(139, 92, 246, 0.3);
-@card-bg: rgba(255, 255, 255, 0.05);
-@card-border: rgba(255, 255, 255, 0.08);
-@radius: 16px;
+// ── Variables ────────────────────────────────────────────────────────────────
+@bg-primary:   #0d0906;
+@bg-secondary: #150e09;
+@text-primary: #e9efba;
+@text-secondary: #9a9070;
+@accent:       #d9af5d;
+@accent-glow:  rgba(217, 175, 93, 0.28);
+@accent-warm:  #902424;
+@accent-lime:  #cede48;
+@card-bg:      rgba(233, 239, 186, 0.04);
+@card-border:  rgba(233, 239, 186, 0.09);
+@radius:       16px;
 
-// Reset & base
+// Japanese palette (Location section)
+@jp-red:   #BC002D;
+@jp-black: #1a1a1a;
+@jp-white: #faf8f5;
+
+// ── Reset ─────────────────────────────────────────────────────────────────────
 *,
 *::before,
 *::after {
@@ -31,30 +38,78 @@ body {
   overflow-x: hidden;
 }
 
-// Progress bar
+// ── Progress bar ──────────────────────────────────────────────────────────────
 .progress-bar {
   position: fixed;
   top: 0;
   left: 0;
   right: 0;
   height: 3px;
-  background: linear-gradient(90deg, @accent, #ec4899);
+  background: linear-gradient(90deg, @accent-warm, @accent, @accent-lime);
   transform-origin: 0%;
   z-index: 1000;
 }
 
-// Section title
+// ── Section title ─────────────────────────────────────────────────────────────
 .section-title {
   font-size: clamp(1.8rem, 5vw, 3rem);
   text-align: center;
   margin-bottom: 3rem;
-  background: linear-gradient(135deg, @text-primary, @accent);
+  background: linear-gradient(135deg, @text-primary 30%, @accent);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
 }
 
-// Hero
+// ── Register button (shared base) ────────────────────────────────────────────
+.register-btn {
+  display: block;
+  width: 100%;
+  padding: 0.9rem 1.8rem;
+  background: linear-gradient(135deg, @accent-warm, @accent);
+  color: @bg-primary;
+  font-size: 1rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: opacity 0.2s, transform 0.15s;
+  white-space: nowrap;
+
+  &:hover:not(:disabled) {
+    opacity: 0.88;
+    transform: translateY(-1px);
+  }
+
+  &:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+  }
+}
+
+// Fixed position wrapper (top-right)
+.register-fixed {
+  position: fixed;
+  top: 1.1rem;
+  right: 1.25rem;
+  z-index: 999;
+  border-radius: 50px;
+  backdrop-filter: blur(14px) saturate(1.4);
+  -webkit-backdrop-filter: blur(14px) saturate(1.4);
+  background: rgba(13, 9, 6, 0.55);
+  box-shadow: 0 2px 20px rgba(0, 0, 0, 0.35);
+
+  .register-btn {
+    width: auto;
+    padding: 0.65rem 1.4rem;
+    font-size: 0.9rem;
+    border-radius: 50px;
+    box-shadow: none;
+  }
+}
+
+// ── 1. HERO ───────────────────────────────────────────────────────────────────
 .hero {
   min-height: 100vh;
   display: flex;
@@ -63,79 +118,172 @@ body {
   justify-content: center;
   text-align: center;
   padding: 2rem;
+  padding-bottom: calc(5rem + 3vw);
   position: relative;
-  background: radial-gradient(ellipse at 50% 30%, rgba(139, 92, 246, 0.15) 0%, transparent 60%),
+  z-index: 1;
+  clip-path: polygon(0 0, 100% 0, 100% calc(100% - 3vw), 0 100%);
+  background:
+    radial-gradient(ellipse at 50% 70%, rgba(144, 36, 36, 0.14) 0%, transparent 55%),
+    radial-gradient(ellipse at 50% 30%, rgba(217, 175, 93, 0.07) 0%, transparent 60%),
     @bg-primary;
 
   &__content {
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 1.5rem;
+    gap: 1.2rem;
+  }
+
+  &__eyebrow {
+    font-size: clamp(0.8rem, 2.5vw, 1.1rem);
+    color: @text-secondary;
+    text-transform: uppercase;
+    letter-spacing: 0.55em;
   }
 
   &__title {
-    font-size: clamp(2.5rem, 10vw, 6rem);
-    font-weight: 800;
-    letter-spacing: -0.02em;
-    background: linear-gradient(135deg, #fff 0%, @accent 50%, #ec4899 100%);
+    font-size: clamp(2.8rem, 11vw, 7rem);
+    font-weight: 900;
+    line-height: 1;
+    letter-spacing: -0.03em;
+    background: linear-gradient(135deg, @accent-lime 0%, @accent 45%, @accent-warm 100%);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
   }
 
-  &__subtitle {
-    font-size: clamp(1rem, 3vw, 1.5rem);
-    color: @text-secondary;
-    max-width: 500px;
-  }
-}
-
-// Scroll hint
-.scroll-hint {
-  position: absolute;
-  bottom: 2rem;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 0.75rem;
-
-  &__mouse {
-    width: 24px;
-    height: 38px;
-    border: 2px solid @text-secondary;
-    border-radius: 12px;
+  &__scroll-hint {
+    position: absolute;
+    bottom: 2.5rem;
     display: flex;
-    justify-content: center;
-    padding-top: 6px;
-  }
-
-  &__wheel {
-    width: 4px;
-    height: 8px;
-    background: @text-secondary;
-    border-radius: 2px;
-  }
-
-  &__text {
-    font-size: 0.75rem;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.4rem;
     color: @text-secondary;
+    font-size: 1.4rem;
+  }
+
+  &__scroll-text {
+    font-size: 0.7rem;
     text-transform: uppercase;
-    letter-spacing: 0.15em;
+    letter-spacing: 0.2em;
+    color: @text-secondary;
   }
 }
 
-// Countdown
-.countdown {
-  padding: 6rem 2rem;
+// ── 2. DATE / CALENDAR ────────────────────────────────────────────────────────
+.date-section {
+  padding: calc(6rem + 3vw) 2rem calc(6rem + 3vw);
   text-align: center;
   background: @bg-secondary;
+  position: relative;
+  z-index: 2;
+  margin-top: -3vw;
+  // top compensates hero "/" diagonal; bottom cuts "\"
+  clip-path: polygon(0 0, 100% 3vw, 100% 100%, 0 calc(100% - 3vw));
+}
+
+.calendar {
+  display: inline-block;
+  background: @card-bg;
+  border: 1px solid @card-border;
+  border-radius: @radius;
+  padding: 2rem;
+  max-width: 420px;
+  width: 100%;
+  backdrop-filter: blur(12px);
+
+  &__month {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: @accent;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    margin-bottom: 1.25rem;
+  }
+
+  &__weekdays {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    margin-bottom: 0.5rem;
+    gap: 2px;
+  }
+
+  &__weekday {
+    font-size: 0.7rem;
+    color: @text-secondary;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    text-align: center;
+    padding: 0.3rem 0;
+  }
+
+  &__grid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 4px;
+  }
+
+  &__day {
+    width: 100%;
+    aspect-ratio: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.85rem;
+    border-radius: 50%;
+    color: @text-primary;
+    font-variant-numeric: tabular-nums;
+    cursor: default;
+    transition: color 0.2s;
+
+    &--dim {
+      color: rgba(233, 239, 186, 0.18);
+    }
+
+    &--active {
+      background: @accent;
+      color: @bg-primary;
+      font-weight: 700;
+    }
+
+    &--final {
+      background: linear-gradient(135deg, @accent, @accent-lime);
+      color: @bg-primary;
+      font-weight: 800;
+      box-shadow: 0 0 18px @accent-glow;
+    }
+  }
+
+  &__final-date {
+    margin-top: 1.75rem;
+    font-size: 1.4rem;
+    font-weight: 800;
+    background: linear-gradient(135deg, @accent, @accent-lime);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    letter-spacing: 0.03em;
+  }
+}
+
+// ── 3. COUNTDOWN ─────────────────────────────────────────────────────────────
+.countdown {
+  padding: calc(6rem + 3vw) 2rem calc(6rem + 3vw);
+  text-align: center;
+  background: @bg-primary;
+  position: relative;
+  z-index: 3;
+  margin-top: -3vw;
+  // top compensates "\" diagonal; bottom cuts "/"
+  clip-path: polygon(0 3vw, 100% 0, 100% calc(100% - 3vw), 0 100%);
 
   &__grid {
     display: flex;
     justify-content: center;
-    gap: 1.5rem;
+    gap: 1.25rem;
     flex-wrap: wrap;
+    margin-bottom: 2.5rem;
   }
 
   &__item {
@@ -146,127 +294,223 @@ body {
     background: @card-bg;
     border: 1px solid @card-border;
     border-radius: @radius;
-    padding: 1.5rem 2rem;
-    min-width: 90px;
-    perspective: 600px;
+    padding: 1.5rem 1.75rem;
+    min-width: 88px;
   }
 
   &__number {
-    font-size: clamp(2rem, 6vw, 3.5rem);
-    font-weight: 700;
+    font-size: clamp(2.2rem, 7vw, 4rem);
+    font-weight: 800;
     font-variant-numeric: tabular-nums;
-    background: linear-gradient(135deg, @text-primary, @accent);
+    background: linear-gradient(135deg, @accent-lime, @accent);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
+    display: block;
   }
 
   &__label {
-    font-size: 0.85rem;
+    font-size: 0.8rem;
     color: @text-secondary;
     text-transform: uppercase;
-    letter-spacing: 0.1em;
+    letter-spacing: 0.12em;
+  }
+
+  &__start {
+    font-size: 1rem;
+    color: @text-secondary;
+
+    strong {
+      color: @text-primary;
+      font-size: 1.2rem;
+    }
   }
 }
 
-// Details
-.details {
-  padding: 6rem 2rem;
+// ── 4. LOCATION — Wabi Sabi / Japanese ────────────────────────────────────────
+.location {
+  // Extra tall so parallax layers have room to travel without exposing empty space
+  padding: calc(10rem + 3vw) 2rem calc(10rem + 3vw);
+  background: @jp-white;
+  text-align: center;
+  position: relative;
+  z-index: 4;
+  overflow: hidden;
+  margin-top: -3vw;
+  // top compensates "/" diagonal; bottom cuts "\"
+  clip-path: polygon(0 0, 100% 3vw, 100% 100%, 0 calc(100% - 3vw));
 
-  &__grid {
-    display: grid;
-    grid-template-columns: 1fr;
-    gap: 1.5rem;
-    max-width: 900px;
-    margin: 0 auto;
-
-    @media (min-width: 768px) {
-      grid-template-columns: repeat(3, 1fr);
-    }
+  // subtle washi-paper grid texture
+  &::before {
+    content: '';
+    position: absolute;
+    inset: -50% 0;
+    background-image:
+      repeating-linear-gradient(
+        0deg, transparent, transparent 60px,
+        rgba(0, 0, 0, 0.018) 60px, rgba(0, 0, 0, 0.018) 61px
+      ),
+      repeating-linear-gradient(
+        90deg, transparent, transparent 60px,
+        rgba(0, 0, 0, 0.018) 60px, rgba(0, 0, 0, 0.018) 61px
+      );
+    pointer-events: none;
+    z-index: 0;
   }
 
-  &__card {
-    background: @card-bg !important;
-    border: 1px solid @card-border !important;
-    border-radius: @radius !important;
-    backdrop-filter: blur(10px);
-    transition: border-color 0.3s;
-
-    &:hover {
-      border-color: @accent !important;
-    }
-
-    p {
-      color: @text-secondary;
-    }
+  // Fast-moving background stripe — deepest layer
+  &__bg-layer {
+    position: absolute;
+    inset: -60% 0;
+    background:
+      repeating-linear-gradient(
+        -8deg,
+        transparent 0px,
+        transparent 120px,
+        rgba(188, 0, 45, 0.015) 120px,
+        rgba(188, 0, 45, 0.015) 122px
+      );
+    z-index: 1;
+    will-change: transform;
   }
 
-  &__card-header {
+  // window vignette — inset shadow that frames the section like a window
+  &__vignette {
+    position: absolute;
+    inset: 0;
+    box-shadow:
+      inset 0 0 120px 40px rgba(0, 0, 0, 0.38),
+      inset 0 0 280px 80px rgba(0, 0, 0, 0.18);
+    z-index: 5;
+    pointer-events: none;
+  }
+
+  // Kanji character — mid-depth layer, large and ghosted
+  &__kanji-layer {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    translate: -50% -50%;
+    font-size: clamp(14rem, 35vw, 28rem);
+    color: @jp-red;
+    opacity: 0.008;
+    line-height: 1;
+    pointer-events: none;
+    z-index: 2;
+    will-change: transform;
+    user-select: none;
+  }
+
+  // Main content — slowest, closest to viewer
+  &__parallax {
+    position: relative;
+    z-index: 6;
+    will-change: transform;
+  }
+
+  &__inner {
+    position: relative;
     display: flex;
+    flex-direction: column;
     align-items: center;
     gap: 0.75rem;
+  }
 
-    h3 {
-      font-size: 1.1rem;
+  &__name {
+    font-size: clamp(2.4rem, 9vw, 5.5rem);
+    font-weight: 900;
+    color: @jp-black;
+    letter-spacing: -0.02em;
+    line-height: 1.05;
+    font-family: Georgia, 'Times New Roman', serif;
+  }
+
+  &__rule {
+    width: 72px;
+    height: 3px;
+    background: @jp-red;
+    margin: 0.8rem auto;
+  }
+
+  &__address {
+    font-size: 1rem;
+    color: @jp-black;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    opacity: 0.55;
+    line-height: 1.8;
+  }
+
+  &__date {
+    font-size: 0.85rem;
+    color: @jp-red;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    margin-top: 0.25rem;
+    opacity: 0.8;
+  }
+
+  &__maps-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.6rem;
+    margin-top: 1.75rem;
+    padding: 0.7rem 1.6rem;
+    border: 2px solid @jp-red;
+    background: @jp-white;
+    color: @jp-red;
+    text-decoration: none;
+    font-size: 0.78rem;
+    font-weight: 700;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    border-radius: 0; // sharp Japanese corners
+    position: relative;
+    overflow: hidden;
+    transition: color 0.25s;
+
+    // fill slides in on hover
+    &::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: @jp-red;
+      transform: scaleX(0);
+      transform-origin: left;
+      transition: transform 0.28s cubic-bezier(0.22, 1, 0.36, 1);
+      z-index: 0;
     }
-  }
 
-  &__icon {
-    font-size: 1.5rem;
-  }
-}
-
-// Highlights
-.highlights {
-  padding: 6rem 2rem;
-  background: @bg-secondary;
-
-  &__grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 1.5rem;
-    max-width: 700px;
-    margin: 0 auto;
-
-    @media (min-width: 768px) {
-      grid-template-columns: repeat(4, 1fr);
-      max-width: 900px;
+    &:hover::before {
+      transform: scaleX(1);
     }
-  }
-
-  &__item {
-    text-align: center;
-    padding: 2rem 1rem;
-    background: @card-bg;
-    border: 1px solid @card-border;
-    border-radius: @radius;
-    cursor: default;
-    transition: border-color 0.3s;
 
     &:hover {
-      border-color: @accent;
+      color: @jp-white;
     }
 
-    h3 {
-      margin-top: 0.5rem;
-      font-size: 1rem;
-    }
-
-    p {
-      font-size: 0.85rem;
-      color: @text-secondary;
-      margin-top: 0.25rem;
+    // all children sit above the fill
+    span {
+      position: relative;
+      z-index: 1;
     }
   }
 
-  &__icon {
-    font-size: 2rem;
+  &__maps-icon {
+    font-size: 1rem;
+    position: relative;
+    z-index: 1;
   }
 }
 
-// Tickets
+// ── 5. TICKETS / REGISTER ─────────────────────────────────────────────────────
 .tickets {
-  padding: 6rem 2rem;
+  padding: calc(6rem + 3vw) 2rem 6rem;
+  background: @bg-secondary;
+  position: relative;
+  z-index: 5;
+  margin-top: -3vw;
+  clip-path: polygon(0 3vw, 100% 0, 100% 100%, 0 100%);
 
   &__card {
     max-width: 480px;
@@ -277,17 +521,14 @@ body {
     backdrop-filter: blur(10px);
   }
 
-  &__stats {
-    display: flex;
-    justify-content: center;
-    gap: 1rem;
-    margin-bottom: 1.5rem;
-  }
-
   &__form {
     display: flex;
     flex-direction: column;
-    gap: 1rem;
+    gap: 0.85rem;
+  }
+
+  &__field {
+    overflow: hidden;
   }
 
   &__input {
@@ -301,9 +542,7 @@ body {
     outline: none;
     transition: border-color 0.3s;
 
-    &::placeholder {
-      color: @text-secondary;
-    }
+    &::placeholder { color: @text-secondary; }
 
     &:focus {
       border-color: @accent;
@@ -311,36 +550,162 @@ body {
     }
   }
 
-  &__button {
-    width: 100%;
-    margin-top: 0.5rem;
+  &__partner-row {
+    display: flex;
+    gap: 0.5rem;
+    align-items: center;
+
+    .tickets__input { flex: 1; }
+  }
+
+  &__remove-btn {
+    flex-shrink: 0;
+    width: 36px;
+    height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid @card-border;
+    border-radius: 8px;
+    color: @text-secondary;
+    font-size: 1.3rem;
+    line-height: 1;
+    cursor: pointer;
+    transition: color 0.2s, border-color 0.2s;
+
+    &:hover { color: @text-primary; border-color: rgba(233, 239, 186, 0.25); }
+  }
+
+  &__add-partner {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    background: none;
+    border: 1px dashed @card-border;
+    border-radius: 10px;
+    color: @text-secondary;
+    font-size: 0.9rem;
+    padding: 0.65rem 1rem;
+    cursor: pointer;
+    transition: color 0.2s, border-color 0.2s;
+    letter-spacing: 0.02em;
+
+    &:hover {
+      color: @accent;
+      border-color: rgba(217, 175, 93, 0.35);
+    }
+  }
+
+  &__add-count {
+    margin-left: auto;
+    font-size: 0.75rem;
+    color: rgba(154, 144, 112, 0.55);
+    font-variant-numeric: tabular-nums;
+  }
+
+  &__btn-wrap {
+    margin-top: 0.25rem;
+  }
+}
+
+// ── Morph Modal ───────────────────────────────────────────────────────────────
+.modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.65);
+  backdrop-filter: blur(8px) saturate(0.7);
+  -webkit-backdrop-filter: blur(8px) saturate(0.7);
+  z-index: 200;
+}
+
+.modal {
+  position: fixed;
+  z-index: 201;
+  background: rgba(18, 12, 7, 0.92);
+  backdrop-filter: blur(32px) saturate(1.6);
+  -webkit-backdrop-filter: blur(32px) saturate(1.6);
+  border: 1px solid @card-border;
+  overflow: hidden;
+
+  &__inner {
+    position: relative;
+    height: 100%;
+    padding: 3rem 2rem 2rem;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+
+    @media (min-width: 480px) {
+      padding: 3rem 2.5rem 2.5rem;
+    }
+  }
+
+  &__close {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    width: 34px;
+    height: 34px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: @card-bg;
+    border: 1px solid @card-border;
+    border-radius: 50%;
+    color: @text-secondary;
+    font-size: 1.35rem;
+    line-height: 1;
+    cursor: pointer;
+    transition: color 0.2s, border-color 0.2s;
+
+    &:hover {
+      color: @text-primary;
+      border-color: rgba(233, 239, 186, 0.28);
+    }
+  }
+
+  &__title {
+    font-size: 1.4rem;
+    font-weight: 600;
+    color: @text-primary;
+    margin: 0 0 1.5rem;
+    letter-spacing: 0.04em;
   }
 
   &__success {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    gap: 1rem;
     text-align: center;
-    padding: 2rem 0;
-
-    h3 {
-      font-size: 1.5rem;
-      margin-top: 0.5rem;
-    }
-
-    p {
-      color: @text-secondary;
-      margin-top: 0.5rem;
-    }
   }
 
   &__success-icon {
     font-size: 3rem;
+    margin: 0;
+  }
+
+  &__success-title {
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: @text-primary;
+    margin: 0;
+  }
+
+  &__success-sub {
+    color: @text-secondary;
+    margin: 0;
   }
 }
 
-// Footer
+// ── Footer ───────────────────────────────────────────────────────────────────
 .footer {
   padding: 3rem 2rem;
   text-align: center;
   color: @text-secondary;
-  font-size: 1.1rem;
+  font-size: 1rem;
   border-top: 1px solid @card-border;
+  background: @bg-primary;
 }

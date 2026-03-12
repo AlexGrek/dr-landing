@@ -48,14 +48,14 @@ lint:
 	@golangci-lint run
 
 dev:
-	@which air > /dev/null 2>&1 || go install github.com/cosmtrek/air@latest
+	@which air > /dev/null 2>&1 || go install github.com/air-verse/air@latest
 	@trap 'kill 0' SIGINT; \
 		(cd frontend && npm run dev) & \
 		air -c .air.toml & \
 		wait
 
 dev-go:
-	@which air > /dev/null 2>&1 || go install github.com/cosmtrek/air@latest
+	@which air > /dev/null 2>&1 || go install github.com/air-verse/air@latest
 	@air -c .air.toml
 
 dev-fe:
@@ -68,13 +68,13 @@ vendor:
 	@go mod vendor
 
 docker-build:
-	docker build -t $(IMAGE) .
+	docker buildx build --platform linux/amd64 -t $(IMAGE) --load .
 
 docker-push:
 	docker push $(IMAGE)
 
 docker-release:
-	docker build -t $(IMAGE) .
+	docker buildx build --platform linux/amd64 -t $(IMAGE) --load .
 	docker push $(IMAGE)
 
 helm-install:

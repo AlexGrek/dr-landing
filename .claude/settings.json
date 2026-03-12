@@ -1,7 +1,9 @@
 {
   "permissions": {
     "allow": [
-      "Bash(npx heroui-cli@latest init)"
+      "Bash(npx heroui-cli@latest init)",
+      "Bash(go install:*)",
+      "WebFetch(domain:www.shecodes.io)"
     ],
     "additionalDirectories": [
       "/Users/vedmedik/.claude/skills",

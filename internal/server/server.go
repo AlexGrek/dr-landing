@@ -23,8 +23,8 @@ func New(version string) *fiber.App {
 
 	// API Routes
 	app.Get("/api/health", handlers.Health(version))
-	app.Get("/api/tickets/available", handlers.GetAvailableTickets)
-	app.Post("/api/tickets/book", handlers.BookTicket)
+	app.Post("/api/register", handlers.Register)
+	app.Get("/api/register/:code", handlers.GetRegistration)
 
 	// Serve frontend SPA (embedded at build time)
 	distFS, _ := fs.Sub(appstatic.DistFS, "dist")

@@ -41,17 +41,24 @@ make dev       # Run with live reload using air
 ## API Implementation Notes
 All endpoints implemented and working:
 1. `GET /api/health` - Health check, returns `{"status":"healthy"}`
-2. `GET /api/tickets/available` - Returns `{available, sold, total}` from GORM
-3. `POST /api/tickets/book` - Books ticket (name, email) with auto-increment ID
+2. `POST /api/register` - Create guest registration (requires `name`, `invitation_code`)
+3. `GET /api/register/:code` - Fetch registration by invitation code
 
-Database auto-migrates on startup. Ticket model:
+Database auto-migrates on startup. Registration model:
 ```go
-type Ticket struct {
-  ID        uint   `gorm:"primaryKey"`
-  Available int
-  Sold      int
-  Name      string
-  Email     string
+type Registration struct {
+  ID             uint      `gorm:"primaryKey"`
+  CreatedAt      time.Time
+  Name           string    `gorm:"not null"`
+  // One of: "15:00","15:30","16:00","16:30","17:00","17:30","18:00","18:30","19:00"
+  ArrivalTime    string
+  // JSON arrays/objects stored as raw text
+  DrinkPrefs     string    `gorm:"type:text"`
+  DressCodePrefs string    `gorm:"type:text"`
+  ActivityPrefs  string    `gorm:"type:text"`
+  InvitationCode string    `gorm:"uniqueIndex;not null"`
+  Avatar         string
+  AdditionalInfo string
 }
 ```
 
@@ -65,7 +72,7 @@ type Ticket struct {
 ## Development Patterns
 - Use GORM for ALL database operations (no manual SQL)
 - Handlers: `func(c fiber.Ctx) error` - return `c.JSON()` or `c.Status().JSON()`
-- Auto-migrations handle schema - modify Ticket struct and restart
+- Auto-migrations handle schema - modify Registration struct and restart
 - Fiber middleware stack: logger → recover → routes
 - Graceful shutdown via os.Signal
 
@@ -95,6 +102,6 @@ make helm-upgrade HELM_RELEASE=staging     # override release name
 
 ## Before Making Changes
 - All endpoints use Fiber v3 and GORM patterns
-- Database changes: modify Ticket struct, restart for auto-migration
+- Database changes: modify Registration struct, restart for auto-migration
 - Run `make build` to verify compilation
 - Use `make dev` for live reload during development

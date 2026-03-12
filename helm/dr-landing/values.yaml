@@ -20,10 +20,16 @@ ingress:
 persistence:
   enabled: true
   storageClass: ""
-  size: 1Gi
+  size: 128Mi
   mountPath: /data
 
-resources: {}
+resources:
+  requests:
+    cpu: 5m
+    memory: 32Mi
+  limits:
+    cpu: 100m
+    memory: 64Mi
 
 nodeSelector: {}
 tolerations: []

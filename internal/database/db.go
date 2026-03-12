@@ -3,6 +3,7 @@ package database
 import (
 	"log"
 	"os"
+	"time"
 
 	"gorm.io/driver/sqlite"
 	"gorm.io/gorm"
@@ -21,24 +22,24 @@ func Init() {
 		log.Fatalf("Failed to connect to database: %v", err)
 	}
 
-	// Auto-migrate the Ticket model
-	err = DB.AutoMigrate(&Ticket{})
+	err = DB.AutoMigrate(&Registration{})
 	if err != nil {
 		log.Fatalf("Failed to migrate database: %v", err)
 	}
-
-	// Seed initial data if table is empty
-	var count int64
-	DB.Model(&Ticket{}).Count(&count)
-	if count == 0 {
-		DB.Create(&Ticket{Available: 100, Sold: 0})
-	}
 }
 
-type Ticket struct {
-	ID        uint   `gorm:"primaryKey" json:"id"`
-	Available int    `json:"available"`
-	Sold      int    `json:"sold"`
-	Name      string `json:"name"`
-	Email     string `json:"email"`
+// Registration holds all guest registration data for the birthday party.
+type Registration struct {
+	ID              uint      `gorm:"primaryKey" json:"id"`
+	CreatedAt       time.Time `json:"created_at"`
+	Name            string    `gorm:"not null" json:"name"`
+	// ArrivalTime stores one of: "15:00","15:30","16:00","16:30","17:00","17:30","18:00","18:30","19:00"
+	ArrivalTime     string    `json:"arrival_time"`
+	// JSON arrays / objects stored as text
+	DrinkPrefs      string    `gorm:"type:text" json:"drink_prefs"`
+	DressCodePrefs  string    `gorm:"type:text" json:"dress_code_prefs"`
+	ActivityPrefs   string    `gorm:"type:text" json:"activity_prefs"`
+	InvitationCode  string    `gorm:"uniqueIndex;not null" json:"invitation_code"`
+	Avatar          string    `json:"avatar"`
+	AdditionalInfo  string    `json:"additional_info"`
 }
