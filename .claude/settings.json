@@ -30,7 +30,8 @@
       "Bash(kubectl describe:*)",
       "Bash(kubectl delete:*)",
       "Bash(kubectl logs:*)",
-      "Bash(npm uninstall:*)"
+      "Bash(npm uninstall:*)",
+      "Bash(git rm:*)"
     ],
     "additionalDirectories": [
       "/Users/vedmedik/.claude/skills",

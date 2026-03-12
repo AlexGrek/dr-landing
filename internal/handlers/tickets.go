@@ -4,6 +4,7 @@ import (
 	"dr-landing/internal/database"
 	"dr-landing/internal/services"
 	"os"
+	"path/filepath"
 
 	"github.com/gofiber/fiber/v3"
 )
@@ -88,7 +89,7 @@ func ServeQRCode(c fiber.Ctx) error {
 	}
 
 	// Read QR code from disk
-	qrFile := qrDir + "/" + code + ".png"
+	qrFile := filepath.Join(qrDir, code+".png")
 	pngData, err := os.ReadFile(qrFile)
 	if err != nil {
 		return c.Status(404).JSON(fiber.Map{"error": "QR code not found"})

@@ -270,7 +270,6 @@ export default function RegisterWizard({ onSuccess }) {
     try {
       const body = {
         name: primaryName.trim(),
-        invitation_code: crypto.randomUUID(),
         arrival_time: arrivalTime,
         drink_prefs: JSON.stringify(drinkPrefs),
         activity_prefs: JSON.stringify(activityPrefs),
@@ -287,11 +286,12 @@ export default function RegisterWizard({ onSuccess }) {
         body: JSON.stringify(body),
       })
       if (res.ok) {
+        const data = await res.json()
         setTimeout(() => onSuccess({
           name: primaryName.trim(),
           partners: partners.filter(n => n.trim()),
           arrivalTime,
-          invitationCode: body.invitation_code,
+          invitationCode: data.invitation_code,
         }), 700)
       } else setSubmitting(false)
     } catch {
