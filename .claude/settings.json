@@ -21,7 +21,10 @@
       "Bash(docker stop:*)",
       "Bash(docker rm:*)",
       "Bash(git add:*)",
-      "Bash(git commit:*)"
+      "Bash(git commit:*)",
+      "Bash(make docker-release:*)",
+      "Bash(kubectl -n dr-landing get pods -o wide)",
+      "Bash(kubectl -n dr-landing logs -l app.kubernetes.io/name=dr-landing --tail=50)"
     ],
     "additionalDirectories": [
       "/Users/vedmedik/.claude/skills",
