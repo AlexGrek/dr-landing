@@ -68,13 +68,13 @@ vendor:
 	@go mod vendor
 
 docker-build:
-	docker buildx build --platform linux/amd64,linux/arm64 -t $(IMAGE) --load --build-arg FRONTEND_CACHE_BUST=$(shell git rev-parse HEAD) .
+	docker buildx build --platform linux/amd64 -t $(IMAGE) --load --build-arg FRONTEND_CACHE_BUST=$(shell git rev-parse HEAD) .
 
 docker-push:
 	docker push $(IMAGE)
 
 docker-release:
-	docker buildx build --platform linux/amd64,linux/arm64 -t $(IMAGE) --push --build-arg FRONTEND_CACHE_BUST=$(shell git rev-parse HEAD) .
+	docker buildx build --platform linux/amd64 -t $(IMAGE) --push --build-arg FRONTEND_CACHE_BUST=$(shell git rev-parse HEAD) .
 
 helm-install:
 	helm install $(HELM_RELEASE) $(HELM_CHART) \
