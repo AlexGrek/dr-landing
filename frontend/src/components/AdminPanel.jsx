@@ -3,6 +3,9 @@ import { motion, AnimatePresence } from 'framer-motion'
 import {
   BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, Cell
 } from 'recharts'
+import drinkOptions from '../config/drinkOptions.json'
+import dressCodeOptions from '../config/dressCodeOptions.json'
+import activityOptions from '../config/activityOptions.json'
 import './AdminPanel.less'
 
 function parseJSON(str) {
@@ -159,10 +162,30 @@ function GuestModal({ guest, onClose, onDelete }) {
   )
 }
 
+const GITHUB_BASE = 'https://github.com/AlexGrek/dr-landing/blob/main/frontend/src/config'
+
 const CHART_CONFIGS = [
-  { key: 'drink_prefs',      label: '🍹 Drink Preferences',    color: '#ffa07a' },
-  { key: 'dress_code_prefs', label: '👔 Dress Code Preferences', color: '#87ceeb' },
-  { key: 'activity_prefs',   label: '🎯 Activity Preferences',  color: '#90ee90' },
+  {
+    key: 'drink_prefs',
+    label: '🍹 Drink Preferences',
+    color: '#ffa07a',
+    options: drinkOptions,
+    githubUrl: `${GITHUB_BASE}/drinkOptions.json`,
+  },
+  {
+    key: 'dress_code_prefs',
+    label: '👔 Dress Code Preferences',
+    color: '#87ceeb',
+    options: dressCodeOptions,
+    githubUrl: `${GITHUB_BASE}/dressCodeOptions.json`,
+  },
+  {
+    key: 'activity_prefs',
+    label: '🎯 Activity Preferences',
+    color: '#90ee90',
+    options: activityOptions,
+    githubUrl: `${GITHUB_BASE}/activityOptions.json`,
+  },
 ]
 
 function countPrefs(registrations, key) {
@@ -244,6 +267,54 @@ function PrefsHistograms({ registrations }) {
             </div>
           )
         })}
+      </div>
+    </motion.div>
+  )
+}
+
+function PrefsOptionsList() {
+  return (
+    <motion.div
+      className="prefs-options-list"
+      initial={{ opacity: 0, y: 24 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ delay: 0.25 }}
+    >
+      <h2 className="histograms-title">Available Options</h2>
+      <div className="histograms-grid">
+        {CHART_CONFIGS.map(({ key, label, color, options, githubUrl }) => (
+          <div key={key} className="histogram-card">
+            <div className="options-card-header">
+              <h3 className="histogram-card-title">{label}</h3>
+              <a
+                className="options-github-link"
+                href={githubUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                title="Edit on GitHub"
+              >
+                <svg className="options-github-icon" viewBox="0 0 16 16" fill="currentColor">
+                  <path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38
+                    0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13
+                    -.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66
+                    .07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15
+                    -.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27
+                    .68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12
+                    .51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48
+                    0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0 0 16 8c0-4.42-3.58-8-8-8z"/>
+                </svg>
+                .json
+              </a>
+            </div>
+            <div className="options-tags">
+              {options.map((opt, i) => (
+                <span key={i} className="options-tag" style={{ borderColor: color + '55', color }}>
+                  {opt}
+                </span>
+              ))}
+            </div>
+          </div>
+        ))}
       </div>
     </motion.div>
   )
@@ -394,6 +465,7 @@ export default function AdminPanel() {
             </div>
 
             <PrefsHistograms registrations={registrations} />
+            <PrefsOptionsList />
 
             <a href="/" className="back-link">← Back to Landing Page</a>
           </motion.div>

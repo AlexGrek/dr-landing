@@ -110,21 +110,37 @@ func GetAllRegistrations(c fiber.Ctx) error {
 	})
 }
 
+func qrDir() string {
+	if d := os.Getenv("QR_DIR"); d != "" {
+		return d
+	}
+	return "./data/qrcodes"
+}
+
+func deleteQRFile(invitationCode string) {
+	_ = os.Remove(filepath.Join(qrDir(), invitationCode+".png"))
+}
+
 func DeleteAllRegistrations(c fiber.Ctx) error {
 	if err := database.DB.Where("1 = 1").Delete(&database.Registration{}).Error; err != nil {
 		return c.Status(500).JSON(fiber.Map{"error": "Failed to delete registrations"})
 	}
+	// Remove the entire QR directory (stalled files included), recreate it empty.
+	dir := qrDir()
+	_ = os.RemoveAll(dir)
+	_ = os.MkdirAll(dir, 0755)
 	return c.JSON(fiber.Map{"success": true})
 }
 
 func DeleteRegistration(c fiber.Ctx) error {
 	id := c.Params("id")
-	result := database.DB.Delete(&database.Registration{}, id)
-	if result.Error != nil {
-		return c.Status(500).JSON(fiber.Map{"error": "Failed to delete registration"})
-	}
-	if result.RowsAffected == 0 {
+	var reg database.Registration
+	if err := database.DB.First(&reg, id).Error; err != nil {
 		return c.Status(404).JSON(fiber.Map{"error": "Not found"})
 	}
+	if err := database.DB.Delete(&reg).Error; err != nil {
+		return c.Status(500).JSON(fiber.Map{"error": "Failed to delete registration"})
+	}
+	deleteQRFile(reg.InvitationCode)
 	return c.JSON(fiber.Map{"success": true})
 }
