@@ -40,6 +40,8 @@ func New(version string) *fiber.App {
 				return fiber.ErrNotFound
 			}
 			c.Set(fiber.HeaderContentType, fiber.MIMETextHTMLCharsetUTF8)
+			c.Set(fiber.HeaderCacheControl, "no-cache")
+			c.Set("Pragma", "no-cache")
 			return c.Send(index)
 		},
 	}))
