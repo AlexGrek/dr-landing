@@ -448,7 +448,12 @@ export default function App() {
         </ScrollReveal>
       </footer>
 
-      <MorphModal open={modalOpen} originRect={originRect} onClose={closeModal}>
+      <MorphModal
+        open={modalOpen}
+        originRect={originRect}
+        onClose={closeModal}
+        closeOnBackdropClick={!registered}
+      >
         {registered ? (
           <TicketConfirmation data={registrationData} />
         ) : (

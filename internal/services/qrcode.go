@@ -4,6 +4,8 @@ import (
 	"crypto/rand"
 	"encoding/base64"
 	"fmt"
+	"os"
+	"path/filepath"
 
 	qrcode "github.com/skip2/go-qrcode"
 )
@@ -20,6 +22,11 @@ func GenerateQRCode(baseURL string) (code string, pngData []byte, err error) {
 	}
 
 	return code, pngData, nil
+}
+
+// GenerateRandomCode creates a random alphanumeric string of 16 characters
+func GenerateRandomCode() string {
+	return generateRandomCode(16)
 }
 
 // generateRandomCode creates a random alphanumeric string of specified length
@@ -47,4 +54,26 @@ func GenerateQRCodeBase64(baseURL string) (code string, base64Data string, err e
 
 	base64Data = "data:image/png;base64," + base64.StdEncoding.EncodeToString(pngData)
 	return code, base64Data, nil
+}
+
+// SaveQRCodeToDisk saves a QR code PNG to disk and returns the file path
+func SaveQRCodeToDisk(invitationCode string, verifyURL string, qrDir string) (string, error) {
+	// Ensure directory exists
+	if err := os.MkdirAll(qrDir, 0755); err != nil {
+		return "", err
+	}
+
+	// Generate QR code
+	pngData, err := qrcode.Encode(verifyURL, qrcode.Medium, 256)
+	if err != nil {
+		return "", err
+	}
+
+	// Save to disk
+	filePath := filepath.Join(qrDir, invitationCode+".png")
+	if err := os.WriteFile(filePath, pngData, 0644); err != nil {
+		return "", err
+	}
+
+	return filePath, nil
 }

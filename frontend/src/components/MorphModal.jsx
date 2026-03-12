@@ -6,7 +6,7 @@ import { motion, AnimatePresence } from 'framer-motion'
  * Usage: capture originRect via e.currentTarget.getBoundingClientRect() on click,
  * pass it along with open/onClose.
  */
-export default function MorphModal({ open, originRect, onClose, children }) {
+export default function MorphModal({ open, originRect, onClose, closeOnBackdropClick = true, children }) {
   if (typeof document === 'undefined') return null
 
   const isMobile = window.innerWidth < 600
@@ -23,7 +23,7 @@ export default function MorphModal({ open, originRect, onClose, children }) {
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.35 }}
-            onClick={onClose}
+            onClick={closeOnBackdropClick ? onClose : undefined}
           />
 
           <motion.div

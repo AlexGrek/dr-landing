@@ -6,7 +6,6 @@ import (
 	"os"
 
 	"github.com/gofiber/fiber/v3"
-	qrcode "github.com/skip2/go-qrcode"
 )
 
 type RegisterRequest struct {
@@ -19,11 +18,6 @@ type RegisterRequest struct {
 	AdditionalInfo string `json:"additional_info"`
 }
 
-type RegisterResponse struct {
-	*database.Registration
-	QRCode string `json:"qr_code"` // base64-encoded PNG
-}
-
 func Register(c fiber.Ctx) error {
 	var req RegisterRequest
 	if err := c.Bind().Body(&req); err != nil {
@@ -33,13 +27,23 @@ func Register(c fiber.Ctx) error {
 		return c.Status(400).JSON(fiber.Map{"error": "name is required"})
 	}
 
-	// Generate QR code and get the random invitation code
+	// Generate invitation code
+	invitationCode := services.GenerateRandomCode()
+
+	// Set up QR code directory
+	qrDir := os.Getenv("QR_DIR")
+	if qrDir == "" {
+		qrDir = "./data/qrcodes"
+	}
+
+	// Generate and save QR code to disk
 	baseURL := os.Getenv("BASE_URL")
 	if baseURL == "" {
 		baseURL = "http://localhost:8080"
 	}
-	invitationCode, qrBase64, err := services.GenerateQRCodeBase64(baseURL)
-	if err != nil {
+	verifyURL := baseURL + "/verify/" + invitationCode
+
+	if _, err := services.SaveQRCodeToDisk(invitationCode, verifyURL, qrDir); err != nil {
 		return c.Status(500).JSON(fiber.Map{"error": "Failed to generate QR code"})
 	}
 
@@ -56,10 +60,7 @@ func Register(c fiber.Ctx) error {
 	if err := database.DB.Create(&reg).Error; err != nil {
 		return c.Status(500).JSON(fiber.Map{"error": "Failed to register"})
 	}
-	return c.Status(201).JSON(RegisterResponse{
-		Registration: &reg,
-		QRCode:       qrBase64,
-	})
+	return c.Status(201).JSON(&reg)
 }
 
 func GetRegistration(c fiber.Ctx) error {
@@ -79,23 +80,18 @@ func Health(version string) fiber.Handler {
 
 func ServeQRCode(c fiber.Ctx) error {
 	code := c.Params("code")
-	var reg database.Registration
 
-	// Verify the code exists
-	if err := database.DB.Where("invitation_code = ?", code).First(&reg).Error; err != nil {
-		return c.Status(404).JSON(fiber.Map{"error": "QR code not found"})
+	// Set up QR code directory (must match where they're saved)
+	qrDir := os.Getenv("QR_DIR")
+	if qrDir == "" {
+		qrDir = "./data/qrcodes"
 	}
 
-	// Generate QR code for verification page
-	baseURL := os.Getenv("BASE_URL")
-	if baseURL == "" {
-		baseURL = "http://localhost:8080"
-	}
-	verifyURL := baseURL + "/verify/" + code
-
-	pngData, err := qrcode.Encode(verifyURL, qrcode.Medium, 256)
+	// Read QR code from disk
+	qrFile := qrDir + "/" + code + ".png"
+	pngData, err := os.ReadFile(qrFile)
 	if err != nil {
-		return c.Status(500).JSON(fiber.Map{"error": "Failed to generate QR code"})
+		return c.Status(404).JSON(fiber.Map{"error": "QR code not found"})
 	}
 
 	c.Set(fiber.HeaderContentType, "image/png")
