@@ -203,7 +203,7 @@ function SubmitButton({ submitting, onSubmit }) {
               className="wizard__loading-bar"
               initial={{ scaleX: 0 }}
               animate={{ scaleX: 1 }}
-              transition={{ duration: 2.4, ease: 'easeInOut' }}
+              transition={{ duration: 1.1, ease: 'easeInOut' }}
             />
             <span className="wizard__loading-label">Getting you in…</span>
           </motion.div>
@@ -269,16 +269,11 @@ export default function RegisterWizard({ onSuccess }) {
     setSubmitting(true)
     try {
       const body = {
-        name: primaryName.trim(),
+        name: [primaryName.trim(), ...partners.map(n => n.trim()).filter(Boolean)].join(', '),
         arrival_time: arrivalTime,
         drink_prefs: JSON.stringify(drinkPrefs),
         activity_prefs: JSON.stringify(activityPrefs),
-        additional_info: [
-          partners.filter(n => n.trim()).length
-            ? 'Partners: ' + partners.filter(n => n.trim()).join(', ')
-            : '',
-          additionalInfo,
-        ].filter(Boolean).join('\n'),
+        additional_info: additionalInfo,
       }
       const res = await fetch('/api/register', {
         method: 'POST',
