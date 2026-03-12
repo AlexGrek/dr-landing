@@ -1,17 +1,13 @@
 import { createPortal } from 'react-dom'
 import { motion, AnimatePresence } from 'framer-motion'
 
-/**
- * Modal that expands from the trigger button's position.
- * Usage: capture originRect via e.currentTarget.getBoundingClientRect() on click,
- * pass it along with open/onClose.
- */
 export default function MorphModal({ open, originRect, onClose, closeOnBackdropClick = true, children }) {
   if (typeof document === 'undefined') return null
 
   const isMobile = window.innerWidth < 600
   const modalW = isMobile ? window.innerWidth - 16 : Math.min(540, window.innerWidth - 32)
   const modalH = isMobile ? window.innerHeight - 48 : Math.min(600, window.innerHeight * 0.9)
+  const finalRadius = isMobile ? 28 : 24
 
   return createPortal(
     <AnimatePresence>
@@ -28,14 +24,17 @@ export default function MorphModal({ open, originRect, onClose, closeOnBackdropC
 
           <motion.div
             className="modal"
+            style={{ transformPerspective: 1400 }}
             initial={{
               top: originRect.top,
               left: originRect.left,
               width: originRect.width,
               height: originRect.height,
-              borderRadius: 9999,
+              borderRadius: finalRadius,
               x: 0,
               y: 0,
+              rotateX: -14,
+              scale: 0.92,
             }}
             animate={{
               top: '50%',
@@ -44,7 +43,9 @@ export default function MorphModal({ open, originRect, onClose, closeOnBackdropC
               y: '-50%',
               width: modalW,
               height: modalH,
-              borderRadius: isMobile ? 28 : 24,
+              borderRadius: finalRadius,
+              rotateX: 0,
+              scale: 1,
             }}
             exit={{
               top: originRect.top,
@@ -53,14 +54,18 @@ export default function MorphModal({ open, originRect, onClose, closeOnBackdropC
               y: 0,
               width: originRect.width,
               height: originRect.height,
-              borderRadius: 9999,
+              borderRadius: finalRadius,
+              rotateX: 10,
+              scale: 0.88,
               opacity: 0,
             }}
             transition={{
               type: 'spring',
-              stiffness: 220,
-              damping: 26,
-              mass: 1.1,
+              stiffness: 240,
+              damping: 28,
+              mass: 1,
+              rotateX: { type: 'spring', stiffness: 260, damping: 22 },
+              scale: { type: 'spring', stiffness: 260, damping: 22 },
             }}
             onClick={(e) => e.stopPropagation()}
           >
@@ -69,7 +74,7 @@ export default function MorphModal({ open, originRect, onClose, closeOnBackdropC
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
-              transition={{ delay: 0.28, duration: 0.22 }}
+              transition={{ delay: 0.26, duration: 0.2 }}
             >
               <button className="modal__close" onClick={onClose} aria-label="Close">×</button>
               {children}

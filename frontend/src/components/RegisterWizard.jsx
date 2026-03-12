@@ -107,23 +107,26 @@ function Stage1({ primaryName, setPrimaryName, partners, setPartners }) {
 // ── Stage 2 & 3: Option checkboxes ────────────────────────────────────────────
 function OptionGrid({ options, selected, onToggle }) {
   return (
-    <div className="wizard__options">
-      {options.map(({ id, label, icon }) => {
-        const on = selected.includes(id)
-        return (
-          <div
-            key={id}
-            className={`wizard__option${on ? ' wizard__option--selected' : ''}`}
-            onClick={() => onToggle(id)}
-          >
-            <span className="wizard__option-icon">{icon}</span>
-            <span className="wizard__option-label">{label}</span>
-            <div className="wizard__checkbox">
-              {on && <span className="wizard__check-mark">✓</span>}
+    <div className="wizard__options-wrap">
+      <span className="wizard__select-hint">select multiple</span>
+      <div className="wizard__options">
+        {options.map(({ id, label, icon }) => {
+          const on = selected.includes(id)
+          return (
+            <div
+              key={id}
+              className={`wizard__option${on ? ' wizard__option--selected' : ''}`}
+              onClick={() => onToggle(id)}
+            >
+              <span className="wizard__option-icon">{icon}</span>
+              <span className="wizard__option-label">{label}</span>
+              <div className="wizard__checkbox">
+                {on && <span className="wizard__check-mark">✓</span>}
+              </div>
             </div>
-          </div>
-        )
-      })}
+          )
+        })}
+      </div>
     </div>
   )
 }
@@ -254,7 +257,7 @@ export default function RegisterWizard({ onSuccess }) {
   ]
 
   useEffect(() => {
-    if (stage !== 5) { setVisibleReview([]); return }
+    if (stage !== 5) return
     const timers = reviewItems.map((_, i) =>
       setTimeout(() => setVisibleReview(prev => [...prev, i]), i * 700)
     )
@@ -262,7 +265,11 @@ export default function RegisterWizard({ onSuccess }) {
   }, [stage])
 
   const goNext = () => { setDirection(1); setStage(s => s + 1) }
-  const goBack = () => { setDirection(-1); setStage(s => s - 1) }
+  const goBack = () => {
+    if (stage === 5) setVisibleReview([])
+    setDirection(-1)
+    setStage(s => s - 1)
+  }
 
   const handleSubmit = async () => {
     if (submitting) return

@@ -787,9 +787,23 @@ body {
   }
 
   // ── Option grid (stages 2 & 3) ─────────────────────────────────────────────
+  &__options-wrap {
+    display: flex;
+    flex-direction: column;
+    gap: 0.55rem;
+  }
+
+  &__select-hint {
+    font-size: 0.72rem;
+    color: @text-secondary;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    opacity: 0.65;
+  }
+
   &__options {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
+    display: flex;
+    flex-wrap: wrap;
     gap: 0.55rem;
   }
 
@@ -798,6 +812,8 @@ body {
     align-items: center;
     gap: 0.55rem;
     padding: 0.65rem 0.75rem;
+    flex: 1 1 calc(50% - 0.55rem);
+    min-width: 120px;
     background: @card-bg;
     border: 1.5px solid @card-border;
     border-radius: 10px;
