@@ -109,3 +109,15 @@ func GetAllRegistrations(c fiber.Ctx) error {
 		"registrations": registrations,
 	})
 }
+
+func DeleteRegistration(c fiber.Ctx) error {
+	id := c.Params("id")
+	result := database.DB.Delete(&database.Registration{}, id)
+	if result.Error != nil {
+		return c.Status(500).JSON(fiber.Map{"error": "Failed to delete registration"})
+	}
+	if result.RowsAffected == 0 {
+		return c.Status(404).JSON(fiber.Map{"error": "Not found"})
+	}
+	return c.JSON(fiber.Map{"success": true})
+}

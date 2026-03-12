@@ -1,12 +1,117 @@
 import { useState, useEffect } from 'react'
-import { motion } from 'framer-motion'
+import { motion, AnimatePresence } from 'framer-motion'
 import './AdminPanel.less'
+
+function parseJSON(str) {
+  if (!str) return null
+  try { return JSON.parse(str) } catch { return str }
+}
+
+function PrefsDetail({ label, value, emoji }) {
+  const parsed = parseJSON(value)
+  if (!parsed) return null
+  const items = Array.isArray(parsed) ? parsed : typeof parsed === 'object' ? Object.entries(parsed).map(([k, v]) => `${k}: ${v}`) : [String(parsed)]
+  if (!items.length) return null
+  return (
+    <div className="guest-detail-row">
+      <span className="guest-detail-label">{emoji} {label}</span>
+      <div className="guest-detail-tags">
+        {items.map((item, i) => <span key={i} className="guest-tag">{item}</span>)}
+      </div>
+    </div>
+  )
+}
+
+function GuestModal({ guest, onClose, onDelete }) {
+  const [deleting, setDeleting] = useState(false)
+
+  async function handleDelete() {
+    if (!confirm(`Delete registration for ${guest.name}?`)) return
+    setDeleting(true)
+    try {
+      const res = await fetch(`/api/registrations/${guest.id}`, { method: 'DELETE' })
+      if (!res.ok) throw new Error('Failed')
+      onDelete(guest.id)
+      onClose()
+    } catch {
+      setDeleting(false)
+    }
+  }
+
+  return (
+    <motion.div
+      className="guest-overlay"
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      onClick={onClose}
+    >
+      <motion.div
+        className="guest-modal"
+        initial={{ opacity: 0, scale: 0.92, y: 24 }}
+        animate={{ opacity: 1, scale: 1, y: 0 }}
+        exit={{ opacity: 0, scale: 0.92, y: 24 }}
+        transition={{ type: 'spring', stiffness: 320, damping: 28 }}
+        onClick={e => e.stopPropagation()}
+      >
+        <div className="guest-modal-header">
+          <div className="guest-modal-avatar">
+            {guest.avatar ? (
+              <img src={guest.avatar} alt={guest.name} />
+            ) : (
+              <span>{guest.name[0]?.toUpperCase()}</span>
+            )}
+          </div>
+          <div>
+            <h2 className="guest-modal-name">{guest.name}</h2>
+            <code className="code-text">{guest.invitation_code}</code>
+          </div>
+          <button className="guest-modal-close" onClick={onClose}>✕</button>
+        </div>
+
+        <div className="guest-modal-body">
+          {guest.arrival_time && (
+            <div className="guest-detail-row">
+              <span className="guest-detail-label">🕐 Arrival</span>
+              <span className="guest-detail-value">{guest.arrival_time}</span>
+            </div>
+          )}
+          <div className="guest-detail-row">
+            <span className="guest-detail-label">📅 Registered</span>
+            <span className="guest-detail-value">
+              {new Date(guest.created_at).toLocaleString('en-US', {
+                month: 'long', day: 'numeric', year: 'numeric',
+                hour: '2-digit', minute: '2-digit'
+              })}
+            </span>
+          </div>
+          <PrefsDetail label="Drinks" value={guest.drink_prefs} emoji="🍹" />
+          <PrefsDetail label="Dress code" value={guest.dress_code_prefs} emoji="👔" />
+          <PrefsDetail label="Activities" value={guest.activity_prefs} emoji="🎯" />
+          {guest.additional_info && (
+            <div className="guest-detail-row guest-detail-row--block">
+              <span className="guest-detail-label">👥 Notes</span>
+              <p className="guest-detail-notes">{guest.additional_info}</p>
+            </div>
+          )}
+        </div>
+
+        <div className="guest-modal-footer">
+          <button className="delete-btn" onClick={handleDelete} disabled={deleting}>
+            {deleting ? 'Deleting...' : '🗑 Delete guest'}
+          </button>
+        </div>
+      </motion.div>
+    </motion.div>
+  )
+}
 
 export default function AdminPanel() {
   const [registrations, setRegistrations] = useState([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
   const [sortBy, setSortBy] = useState('created')
+  const [selected, setSelected] = useState(null)
 
   useEffect(() => {
     const fetchRegistrations = async () => {
@@ -22,16 +127,17 @@ export default function AdminPanel() {
         setLoading(false)
       }
     }
-
     fetchRegistrations()
   }, [])
 
   const sortedReg = [...registrations].sort((a, b) => {
-    if (sortBy === 'created') {
-      return new Date(b.created_at) - new Date(a.created_at)
-    }
+    if (sortBy === 'created') return new Date(b.created_at) - new Date(a.created_at)
     return a.name.localeCompare(b.name)
   })
+
+  function handleDelete(id) {
+    setRegistrations(prev => prev.filter(r => r.id !== id))
+  }
 
   return (
     <div className="admin-page">
@@ -84,10 +190,11 @@ export default function AdminPanel() {
                 {sortedReg.map((reg, idx) => (
                   <motion.div
                     key={reg.id}
-                    className="table-row"
+                    className="table-row table-row--clickable"
                     initial={{ opacity: 0, x: -20 }}
                     animate={{ opacity: 1, x: 0 }}
                     transition={{ delay: idx * 0.05 }}
+                    onClick={() => setSelected(reg)}
                   >
                     <div className="col-name">
                       <span className="name-text">{reg.name}</span>
@@ -135,6 +242,16 @@ export default function AdminPanel() {
           </motion.div>
         )}
       </div>
+
+      <AnimatePresence>
+        {selected && (
+          <GuestModal
+            guest={selected}
+            onClose={() => setSelected(null)}
+            onDelete={handleDelete}
+          />
+        )}
+      </AnimatePresence>
     </div>
   )
 }

@@ -26,6 +26,7 @@ func New(version string) *fiber.App {
 	app.Post("/api/register", handlers.Register)
 	app.Get("/api/register/:code", handlers.GetRegistration)
 	app.Get("/api/registrations", handlers.GetAllRegistrations)
+	app.Delete("/api/registrations/:id", handlers.DeleteRegistration)
 	app.Get("/api/qr-image/:code", handlers.ServeQRCode)
 
 	// Serve frontend SPA (embedded at build time)
