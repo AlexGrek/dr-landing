@@ -230,7 +230,9 @@
 }
 
 .badge {
-  display: inline-block;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
   padding: 0.25rem 0.5rem;
   border-radius: 0.25rem;
   font-size: 0.8rem;
@@ -241,6 +243,12 @@
 
   &:hover {
     background: rgba(255, 255, 255, 0.12);
+  }
+
+  .badge-count {
+    font-size: 0.72rem;
+    font-weight: 700;
+    opacity: 0.85;
   }
 
   &-drink {

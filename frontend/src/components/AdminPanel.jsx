@@ -445,18 +445,25 @@ export default function AdminPanel() {
                     </div>
                     <div className="col-prefs">
                       <div className="prefs-badges">
-                        {reg.drink_prefs && (
-                          <span className="badge badge-drink">🍹</span>
-                        )}
-                        {reg.dress_code_prefs && (
-                          <span className="badge badge-dress">👔</span>
-                        )}
-                        {reg.activity_prefs && (
-                          <span className="badge badge-activity">🎯</span>
-                        )}
-                        {reg.additional_info && (
-                          <span className="badge badge-guests">👥</span>
-                        )}
+                        {(() => {
+                          const drinks = parseJSON(reg.drink_prefs)
+                          const dress = parseJSON(reg.dress_code_prefs)
+                          const acts = parseJSON(reg.activity_prefs)
+                          return (<>
+                            {Array.isArray(drinks) && drinks.length > 0 && (
+                              <span className="badge badge-drink">🍹 <span className="badge-count">{drinks.length}</span></span>
+                            )}
+                            {Array.isArray(dress) && dress.length > 0 && (
+                              <span className="badge badge-dress">👔 <span className="badge-count">{dress.length}</span></span>
+                            )}
+                            {Array.isArray(acts) && acts.length > 0 && (
+                              <span className="badge badge-activity">🎯 <span className="badge-count">{acts.length}</span></span>
+                            )}
+                            {reg.additional_info && (
+                              <span className="badge badge-guests">👥</span>
+                            )}
+                          </>)
+                        })()}
                       </div>
                     </div>
                   </motion.div>
