@@ -25,7 +25,8 @@
       "Bash(make docker-release:*)",
       "Bash(kubectl -n dr-landing get pods -o wide)",
       "Bash(kubectl -n dr-landing logs -l app.kubernetes.io/name=dr-landing --tail=50)",
-      "Bash(go get:*)"
+      "Bash(go get:*)",
+      "Bash(kubectl get:*)"
     ],
     "additionalDirectories": [
       "/Users/vedmedik/.claude/skills",
