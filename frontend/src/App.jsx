@@ -6,6 +6,7 @@ import MorphModal from './components/MorphModal'
 import RegisterWizard from './components/RegisterWizard'
 import VerifyRegistration from './components/VerifyRegistration'
 import AdminPanel from './components/AdminPanel'
+import TicketConfirmation from './components/TicketConfirmation'
 
 function ProgressBar() {
   const { scrollYProgress } = useScroll()
@@ -399,6 +400,7 @@ export default function App() {
   const [modalOpen, setModalOpen] = useState(false)
   const [originRect, setOriginRect] = useState(null)
   const [registered, setRegistered] = useState(false)
+  const [registrationData, setRegistrationData] = useState(null)
 
   // Check if we're on a special route
   const pathname = window.location.pathname
@@ -448,13 +450,12 @@ export default function App() {
 
       <MorphModal open={modalOpen} originRect={originRect} onClose={closeModal}>
         {registered ? (
-          <div className="modal__success">
-            <p className="modal__success-icon">🎉</p>
-            <h3 className="modal__success-title">You're on the list!</h3>
-            <p className="modal__success-sub">See you on March 22 at 15:00</p>
-          </div>
+          <TicketConfirmation data={registrationData} />
         ) : (
-          <RegisterWizard onSuccess={() => setRegistered(true)} />
+          <RegisterWizard onSuccess={(data) => {
+            setRegistrationData(data)
+            setRegistered(true)
+          }} />
         )}
       </MorphModal>
     </div>

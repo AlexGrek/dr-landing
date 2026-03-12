@@ -26,7 +26,11 @@
       "Bash(kubectl -n dr-landing get pods -o wide)",
       "Bash(kubectl -n dr-landing logs -l app.kubernetes.io/name=dr-landing --tail=50)",
       "Bash(go get:*)",
-      "Bash(kubectl get:*)"
+      "Bash(kubectl get:*)",
+      "Bash(kubectl describe:*)",
+      "Bash(kubectl delete:*)",
+      "Bash(kubectl logs:*)",
+      "Bash(npm uninstall:*)"
     ],
     "additionalDirectories": [
       "/Users/vedmedik/.claude/skills",

@@ -26,7 +26,7 @@ func New(version string) *fiber.App {
 	app.Post("/api/register", handlers.Register)
 	app.Get("/api/register/:code", handlers.GetRegistration)
 	app.Get("/api/registrations", handlers.GetAllRegistrations)
-	app.Get("/qr/:code", handlers.ServeQRCode)
+	app.Get("/api/qr-image/:code", handlers.ServeQRCode)
 
 	// Serve frontend SPA (embedded at build time)
 	distFS, _ := fs.Sub(appstatic.DistFS, "dist")

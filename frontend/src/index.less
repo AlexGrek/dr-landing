@@ -1019,6 +1019,91 @@ body {
   }
 }
 
+// ── Ticket Confirmation ────────────────────────────────────────────────────────
+.ticket-confirmation {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.5rem;
+  text-align: center;
+
+  &__header {
+    width: 100%;
+  }
+
+  &__title {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: @text-primary;
+    margin: 0;
+    letter-spacing: 0.03em;
+  }
+
+  &__qr-wrapper {
+    display: flex;
+    justify-content: center;
+    width: 100%;
+  }
+
+  &__qr-bg {
+    background: @card-bg;
+    border: 1px solid @card-border;
+    border-radius: @radius;
+    padding: 1.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  &__qr {
+    width: 200px;
+    height: 200px;
+    display: block;
+  }
+
+  &__details {
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+    width: 100%;
+  }
+
+  &__detail-item {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.4rem;
+    padding: 0.85rem 1rem;
+    background: @card-bg;
+    border: 1px solid @card-border;
+    border-radius: 10px;
+    text-align: left;
+  }
+
+  &__label {
+    font-size: 0.75rem;
+    color: @text-secondary;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    font-weight: 700;
+  }
+
+  &__value {
+    font-size: 0.95rem;
+    color: @text-primary;
+    font-weight: 500;
+    line-height: 1.5;
+
+    div { margin: 0.2rem 0; }
+  }
+
+  &__address {
+    font-size: 0.85rem;
+    color: @text-secondary;
+    opacity: 0.75;
+  }
+}
+
 // ── Footer ───────────────────────────────────────────────────────────────────
 .footer {
   padding: 3rem 2rem;

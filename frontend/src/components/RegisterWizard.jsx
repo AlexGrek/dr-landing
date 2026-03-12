@@ -286,8 +286,14 @@ export default function RegisterWizard({ onSuccess }) {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(body),
       })
-      if (res.ok) setTimeout(onSuccess, 700)
-      else setSubmitting(false)
+      if (res.ok) {
+        setTimeout(() => onSuccess({
+          name: primaryName.trim(),
+          partners: partners.filter(n => n.trim()),
+          arrivalTime,
+          invitationCode: body.invitation_code,
+        }), 700)
+      } else setSubmitting(false)
     } catch {
       setSubmitting(false)
     }
