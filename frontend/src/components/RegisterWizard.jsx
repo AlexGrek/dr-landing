@@ -148,7 +148,7 @@ function Stage4({ arrivalTime, setArrivalTime, additionalInfo, setAdditionalInfo
       <p className="wizard__sublabel">Anything else we should know?</p>
       <textarea
         className="tickets__input wizard__textarea"
-        placeholder="Allergies, special requests, surprise ideas…"
+        placeholder={arrivalTime !== '15:00' ? 'Explain why you are late…' : 'Allergies, special requests, surprise ideas…'}
         value={additionalInfo}
         onChange={e => setAdditionalInfo(e.target.value)}
         rows={3}
