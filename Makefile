@@ -68,14 +68,13 @@ vendor:
 	@go mod vendor
 
 docker-build:
-	docker buildx build --platform linux/amd64 -t $(IMAGE) --load .
+	docker buildx build --platform linux/amd64 -t $(IMAGE) --load --build-arg FRONTEND_CACHE_BUST=$(shell find frontend -type f \( -name '*.js' -o -name '*.jsx' -o -name '*.css' -o -name '*.less' -o -name 'package*.json' \) -exec md5 {} \; | sort | md5) .
 
 docker-push:
 	docker push $(IMAGE)
 
 docker-release:
-	docker buildx build --platform linux/amd64 -t $(IMAGE) --load .
-	docker push $(IMAGE)
+	docker buildx build --platform linux/amd64 -t $(IMAGE) --push --build-arg FRONTEND_CACHE_BUST=$(shell find frontend -type f \( -name '*.js' -o -name '*.jsx' -o -name '*.css' -o -name '*.less' -o -name 'package*.json' \) -exec md5 {} \; | sort | md5) .
 
 helm-install:
 	helm install $(HELM_RELEASE) $(HELM_CHART) \
