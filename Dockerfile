@@ -2,10 +2,11 @@
 FROM node:22-alpine AS frontend
 ARG FRONTEND_CACHE_BUST=default
 WORKDIR /app
+RUN echo "Cache buster: ${FRONTEND_CACHE_BUST}"
 COPY frontend/package.json frontend/package-lock.json ./
 RUN npm ci
 COPY frontend/ ./
-RUN echo "Cache buster: ${FRONTEND_CACHE_BUST}" && npm run build
+RUN npm run build
 
 # Stage 2: Build Go binary
 FROM golang:1.25-alpine AS builder
