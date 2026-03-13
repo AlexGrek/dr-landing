@@ -44,7 +44,7 @@ function HeroSection() {
         className="hero__scroll-hint"
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
-        transition={{ delay: 1.8 }}
+        transition={{ delay: 0.8 }}
       >
         <motion.span
           animate={{ y: [0, 8, 0] }}

@@ -1,13 +1,34 @@
 import { useState, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { Users, Wine, Music, Shirt, Clock, CheckCircle2 } from 'lucide-react'
+import { Users, Wine, Music, Shirt, Clock, CheckCircle2, ScrollText } from 'lucide-react'
 import DRINK_OPTIONS from '../config/drinkOptions.json'
 import ACTIVITY_OPTIONS from '../config/activityOptions.json'
 import DRESS_CODE_OPTIONS from '../config/dressCodeOptions.json'
 
 const MAX_GUESTS = 8
 
+const RULES_TEXT = `1. Your ticket is personal and non-transferable. Each QR code admits the guests listed on it only.
+
+2. Arrival window is 15:00 – 19:00. Doors close at 20:00. If you're running late, please let us know in the notes.
+
+3. The venue has a maximum capacity. If you registered for a time slot, please try to arrive within 30 minutes of your chosen time.
+
+4. Dress code is a recommendation, not a requirement — but we hope you'll join the fun.
+
+5. Photos and videos are welcome for personal use. Please ask before posting anything that features other guests.
+
+6. Alcohol is for guests 18+. Know your limits and look after each other.
+
+7. The hosts reserve the right to ask anyone who is being disrespectful or disruptive to leave.
+
+8. Food and drink preferences are used for planning only — we can't guarantee every option will be available.
+
+9. If you need to cancel after registering, please do so at least 24 hours in advance so we can adjust the headcount.
+
+10. Most importantly: come ready to have a great time. 🎉`
+
 const STAGES = [
+  { Icon: ScrollText, title: 'Rules & Conditions', accent: '#8fd9a8' },
   { Icon: Users, title: "Who's coming?",       accent: '#d9af5d' },
   { Icon: Wine, title: 'Food & Drinks',        accent: '#5dc4d9' },
   { Icon: Music, title: 'Preferred Activities', accent: '#b05dd9' },
@@ -24,7 +45,20 @@ const slide = {
   exit: (dir) => ({ x: dir * -56, opacity: 0 }),
 }
 
-// ── Stage 1: Names ────────────────────────────────────────────────────────────
+// ── Stage 1: Rules & Conditions ───────────────────────────────────────────────
+function StageRules() {
+  return (
+    <div className="wizard__stage-body">
+      <textarea
+        className="wizard__rules-text"
+        readOnly
+        value={RULES_TEXT}
+      />
+    </div>
+  )
+}
+
+// ── Stage 2: Names ────────────────────────────────────────────────────────────
 function Stage1({ primaryName, setPrimaryName, partners, setPartners }) {
   const canAdd = 1 + partners.length < MAX_GUESTS
 
@@ -236,7 +270,7 @@ export default function RegisterWizard({ onSuccess }) {
   ]
 
   useEffect(() => {
-    if (stage !== 6) return
+    if (stage !== 7) return
     const timers = reviewItems.map((_, i) =>
       setTimeout(() => setVisibleReview(prev => [...prev, i]), i * 700)
     )
@@ -245,7 +279,7 @@ export default function RegisterWizard({ onSuccess }) {
 
   const goNext = () => { setDirection(1); setStage(s => s + 1) }
   const goBack = () => {
-    if (stage === 6) setVisibleReview([])
+    if (stage === 7) setVisibleReview([])
     setDirection(-1)
     setStage(s => s - 1)
   }
@@ -282,7 +316,7 @@ export default function RegisterWizard({ onSuccess }) {
   }
 
   const cfg = STAGES[stage - 1]
-  const canNext = stage === 1 ? primaryName.trim() !== '' : true
+  const canNext = stage === 2 ? primaryName.trim() !== '' : true
 
   return (
     <div className="wizard" style={{ '--stage-accent': cfg.accent }}>
@@ -318,40 +352,41 @@ export default function RegisterWizard({ onSuccess }) {
             exit="exit"
             transition={{ duration: 0.28, ease: [0.22, 1, 0.36, 1] }}
           >
-            {stage === 1 && (
+            {stage === 1 && <StageRules />}
+            {stage === 2 && (
               <Stage1
                 primaryName={primaryName} setPrimaryName={setPrimaryName}
                 partners={partners} setPartners={setPartners}
               />
             )}
-            {stage === 2 && (
+            {stage === 3 && (
               <OptionGrid
                 options={DRINK_OPTIONS}
                 selected={drinkPrefs}
                 onToggle={val => toggle(drinkPrefs, setDrinkPrefs, val)}
               />
             )}
-            {stage === 3 && (
+            {stage === 4 && (
               <OptionGrid
                 options={ACTIVITY_OPTIONS}
                 selected={activityPrefs}
                 onToggle={val => toggle(activityPrefs, setActivityPrefs, val)}
               />
             )}
-            {stage === 4 && (
+            {stage === 5 && (
               <OptionGrid
                 options={DRESS_CODE_OPTIONS}
                 selected={dressCodePrefs}
                 onToggle={val => toggle(dressCodePrefs, setDressCodePrefs, val)}
               />
             )}
-            {stage === 5 && (
+            {stage === 6 && (
               <Stage5Arrival
                 arrivalTime={arrivalTime} setArrivalTime={setArrivalTime}
                 additionalInfo={additionalInfo} setAdditionalInfo={setAdditionalInfo}
               />
             )}
-            {stage === 6 && (
+            {stage === 7 && (
               <Stage6Review reviewItems={reviewItems} visibleReview={visibleReview} />
             )}
           </motion.div>
@@ -367,13 +402,13 @@ export default function RegisterWizard({ onSuccess }) {
             disabled={submitting}
           >← Back</button>
         )}
-        {stage < 6 ? (
+        {stage < 7 ? (
           <button
             className="wizard__btn wizard__btn--next"
             onClick={goNext}
             disabled={!canNext}
           >
-            {stage === 5 ? 'Review →' : 'Next →'}
+            {stage === 1 ? 'Agree →' : stage === 6 ? 'Review →' : 'Next →'}
           </button>
         ) : (
           <SubmitButton submitting={submitting} onSubmit={handleSubmit} />
