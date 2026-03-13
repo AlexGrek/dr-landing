@@ -64,6 +64,35 @@ func Register(c fiber.Ctx) error {
 	return c.Status(201).JSON(&reg)
 }
 
+type UpdatePrefsRequest struct {
+	DrinkPrefs     string `json:"drink_prefs"`
+	DressCodePrefs string `json:"dress_code_prefs"`
+	ActivityPrefs  string `json:"activity_prefs"`
+	ArrivalTime    string `json:"arrival_time"`
+	AdditionalInfo string `json:"additional_info"`
+}
+
+func UpdatePrefs(c fiber.Ctx) error {
+	code := c.Params("code")
+	var reg database.Registration
+	if err := database.DB.Where("invitation_code = ?", code).First(&reg).Error; err != nil {
+		return c.Status(404).JSON(fiber.Map{"error": "Not found"})
+	}
+	var req UpdatePrefsRequest
+	if err := c.Bind().Body(&req); err != nil {
+		return c.Status(400).JSON(fiber.Map{"error": "Invalid request body"})
+	}
+	reg.DrinkPrefs = req.DrinkPrefs
+	reg.DressCodePrefs = req.DressCodePrefs
+	reg.ActivityPrefs = req.ActivityPrefs
+	reg.ArrivalTime = req.ArrivalTime
+	reg.AdditionalInfo = req.AdditionalInfo
+	if err := database.DB.Save(&reg).Error; err != nil {
+		return c.Status(500).JSON(fiber.Map{"error": "Failed to update"})
+	}
+	return c.JSON(&reg)
+}
+
 func GetRegistration(c fiber.Ctx) error {
 	code := c.Params("code")
 	var reg database.Registration

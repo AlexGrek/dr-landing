@@ -101,13 +101,40 @@
     }
   }
 
+  .section-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 0.75rem;
+  }
+
   .section-title {
     font-size: 0.75rem;
     text-transform: uppercase;
     color: #888;
     letter-spacing: 0.15em;
-    margin: 0 0 0.75rem 0;
+    margin: 0;
     font-weight: 600;
+  }
+
+  .section-edit-btn {
+    background: none;
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    color: #888;
+    font-size: 0.7rem;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    padding: 0.2rem 0.6rem;
+    border-radius: 2px;
+    cursor: pointer;
+    font-family: inherit;
+    transition: border-color 0.2s, color 0.2s;
+
+    &:hover {
+      border-color: rgba(255, 255, 255, 0.4);
+      color: #ccc;
+    }
   }
 
   .info-grid {
@@ -226,5 +253,111 @@
 
   &:hover {
     color: #fff;
+  }
+}
+
+// ── Edit prefs modal ──────────────────────────────────────────────────────────
+.edit-modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.7);
+  backdrop-filter: blur(4px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: 1rem;
+}
+
+.edit-modal {
+  background: #1a1a2e;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 1rem;
+  width: 100%;
+  max-width: 540px;
+  max-height: 85vh;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+
+  &__header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1.25rem 1.5rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    flex-shrink: 0;
+  }
+
+  &__title {
+    margin: 0;
+    font-size: 1rem;
+    font-weight: 600;
+    color: #fff;
+    letter-spacing: 0.02em;
+  }
+
+  &__close {
+    background: none;
+    border: none;
+    color: #888;
+    font-size: 1rem;
+    cursor: pointer;
+    padding: 0.25rem;
+    line-height: 1;
+    font-family: inherit;
+    transition: color 0.2s;
+
+    &:hover { color: #fff; }
+  }
+
+  &__body {
+    flex: 1;
+    overflow-y: auto;
+    padding: 1.25rem 1.5rem;
+
+    // Inherit wizard option styles
+    .wizard__options-wrap { margin-top: 0; }
+  }
+
+  &__footer {
+    display: flex;
+    gap: 0.75rem;
+    justify-content: flex-end;
+    padding: 1rem 1.5rem;
+    border-top: 1px solid rgba(255, 255, 255, 0.08);
+    flex-shrink: 0;
+  }
+
+  &__cancel,
+  &__save {
+    padding: 0.5rem 1.25rem;
+    border-radius: 4px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    cursor: pointer;
+    font-family: inherit;
+    transition: background 0.2s, color 0.2s, border-color 0.2s;
+
+    &:disabled { opacity: 0.5; cursor: not-allowed; }
+  }
+
+  &__cancel {
+    background: none;
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    color: #aaa;
+
+    &:hover:not(:disabled) {
+      border-color: rgba(255, 255, 255, 0.35);
+      color: #fff;
+    }
+  }
+
+  &__save {
+    background: rgba(255, 255, 255, 0.9);
+    border: 1px solid transparent;
+    color: #111;
+
+    &:hover:not(:disabled) { background: #fff; }
   }
 }

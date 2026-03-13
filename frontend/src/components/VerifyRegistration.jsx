@@ -1,6 +1,8 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, lazy, Suspense } from 'react'
 import { motion } from 'framer-motion'
 import './VerifyRegistration.less'
+
+const EditPrefsModal = lazy(() => import('./EditPrefsModal'))
 
 const MAPS_URL = 'https://maps.app.goo.gl/bEvJxmD1Wt1GffAP9'
 
@@ -48,6 +50,7 @@ export default function VerifyRegistration({ code }) {
   const [registration, setRegistration] = useState(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
+  const [editSection, setEditSection] = useState(null)
 
   useEffect(() => {
     const fetchRegistration = async () => {
@@ -70,6 +73,11 @@ export default function VerifyRegistration({ code }) {
 
     fetchRegistration()
   }, [code])
+
+  const handleSave = (updated) => {
+    setRegistration(updated)
+    setEditSection(null)
+  }
 
   return (
     <div className="verify-page">
@@ -135,40 +143,40 @@ export default function VerifyRegistration({ code }) {
                 </div>
               </div>
 
-              {registration.arrival_time && (
-                <div className="card-section">
+              <div className="card-section">
+                <div className="section-header">
                   <h3 className="section-title">Arrival Time</h3>
-                  <p className="arrival-time">{registration.arrival_time}</p>
+                  <button className="section-edit-btn" onClick={() => setEditSection('arrival')}>Edit</button>
                 </div>
-              )}
+                <p className="arrival-time">{registration.arrival_time || '15:00'}</p>
+                {registration.additional_info && (
+                  <p className="additional-info" style={{ marginTop: '0.5rem' }}>{registration.additional_info}</p>
+                )}
+              </div>
 
-              {registration.drink_prefs && (
-                <div className="card-section">
+              <div className="card-section">
+                <div className="section-header">
                   <h3 className="section-title">Food & Drinks</h3>
-                  <PrefChips json={registration.drink_prefs} />
+                  <button className="section-edit-btn" onClick={() => setEditSection('drinks')}>Edit</button>
                 </div>
-              )}
+                <PrefChips json={registration.drink_prefs} />
+              </div>
 
-              {registration.dress_code_prefs && (
-                <div className="card-section">
+              <div className="card-section">
+                <div className="section-header">
                   <h3 className="section-title">Dress Code</h3>
-                  <PrefChips json={registration.dress_code_prefs} />
+                  <button className="section-edit-btn" onClick={() => setEditSection('dress_code')}>Edit</button>
                 </div>
-              )}
+                <PrefChips json={registration.dress_code_prefs} />
+              </div>
 
-              {registration.activity_prefs && (
-                <div className="card-section">
+              <div className="card-section">
+                <div className="section-header">
                   <h3 className="section-title">Activities</h3>
-                  <PrefChips json={registration.activity_prefs} />
+                  <button className="section-edit-btn" onClick={() => setEditSection('activities')}>Edit</button>
                 </div>
-              )}
-
-              {registration.additional_info && (
-                <div className="card-section">
-                  <h3 className="section-title">Additional Guests</h3>
-                  <p className="additional-info">{registration.additional_info}</p>
-                </div>
-              )}
+                <PrefChips json={registration.activity_prefs} />
+              </div>
 
               {registration.avatar && (
                 <div className="card-section">
@@ -206,6 +214,17 @@ export default function VerifyRegistration({ code }) {
 
             <a href="/" className="back-link">← Back to Landing Page</a>
           </motion.div>
+        )}
+
+        {editSection && registration && (
+          <Suspense fallback={null}>
+            <EditPrefsModal
+              section={editSection}
+              registration={registration}
+              onSave={handleSave}
+              onClose={() => setEditSection(null)}
+            />
+          </Suspense>
         )}
       </div>
     </div>

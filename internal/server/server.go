@@ -25,6 +25,7 @@ func New(version string) *fiber.App {
 	app.Get("/api/health", handlers.Health(version))
 	app.Post("/api/register", handlers.Register)
 	app.Get("/api/register/:code", handlers.GetRegistration)
+	app.Post("/api/register/:code/prefs", handlers.UpdatePrefs)
 	app.Get("/api/registrations", handlers.GetAllRegistrations)
 	app.Delete("/api/registrations", handlers.DeleteAllRegistrations)
 	app.Delete("/api/registrations/:id", handlers.DeleteRegistration)
