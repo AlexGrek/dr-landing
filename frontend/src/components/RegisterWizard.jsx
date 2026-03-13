@@ -28,12 +28,12 @@ const RULES_TEXT = `1. Your ticket is personal and non-transferable. Each QR cod
 10. Most importantly: come ready to have a great time. 🎉`
 
 const STAGES = [
-  { Icon: ScrollText, title: 'Rules & Conditions', accent: '#8fd9a8' },
-  { Icon: Users, title: "Who's coming?",       accent: '#d9af5d' },
-  { Icon: Wine, title: 'Food & Drinks',        accent: '#5dc4d9' },
+  { Icon: Users, title: "Who's coming?",        accent: '#d9af5d' },
+  { Icon: Wine, title: 'Food & Drinks',         accent: '#5dc4d9' },
   { Icon: Music, title: 'Preferred Activities', accent: '#b05dd9' },
   { Icon: Shirt, title: 'Preferred Dress Code', accent: '#e8a87c' },
-  { Icon: Clock, title: 'Arrival',             accent: '#e07a5f' },
+  { Icon: Clock, title: 'Arrival',              accent: '#e07a5f' },
+  { Icon: ScrollText, title: 'Rules & Conditions', accent: '#8fd9a8' },
   { Icon: CheckCircle2, title: 'Almost there!', accent: '#cede48' },
 ]
 
@@ -316,7 +316,7 @@ export default function RegisterWizard({ onSuccess }) {
   }
 
   const cfg = STAGES[stage - 1]
-  const canNext = stage === 2 ? primaryName.trim() !== '' : true
+  const canNext = stage === 1 ? primaryName.trim() !== '' : true
 
   return (
     <div className="wizard" style={{ '--stage-accent': cfg.accent }}>
@@ -352,40 +352,40 @@ export default function RegisterWizard({ onSuccess }) {
             exit="exit"
             transition={{ duration: 0.28, ease: [0.22, 1, 0.36, 1] }}
           >
-            {stage === 1 && <StageRules />}
-            {stage === 2 && (
+            {stage === 1 && (
               <Stage1
                 primaryName={primaryName} setPrimaryName={setPrimaryName}
                 partners={partners} setPartners={setPartners}
               />
             )}
-            {stage === 3 && (
+            {stage === 2 && (
               <OptionGrid
                 options={DRINK_OPTIONS}
                 selected={drinkPrefs}
                 onToggle={val => toggle(drinkPrefs, setDrinkPrefs, val)}
               />
             )}
-            {stage === 4 && (
+            {stage === 3 && (
               <OptionGrid
                 options={ACTIVITY_OPTIONS}
                 selected={activityPrefs}
                 onToggle={val => toggle(activityPrefs, setActivityPrefs, val)}
               />
             )}
-            {stage === 5 && (
+            {stage === 4 && (
               <OptionGrid
                 options={DRESS_CODE_OPTIONS}
                 selected={dressCodePrefs}
                 onToggle={val => toggle(dressCodePrefs, setDressCodePrefs, val)}
               />
             )}
-            {stage === 6 && (
+            {stage === 5 && (
               <Stage5Arrival
                 arrivalTime={arrivalTime} setArrivalTime={setArrivalTime}
                 additionalInfo={additionalInfo} setAdditionalInfo={setAdditionalInfo}
               />
             )}
+            {stage === 6 && <StageRules />}
             {stage === 7 && (
               <Stage6Review reviewItems={reviewItems} visibleReview={visibleReview} />
             )}
@@ -408,7 +408,7 @@ export default function RegisterWizard({ onSuccess }) {
             onClick={goNext}
             disabled={!canNext}
           >
-            {stage === 1 ? 'Agree →' : stage === 6 ? 'Review →' : 'Next →'}
+            {stage === 6 ? 'Agree →' : 'Next →'}
           </button>
         ) : (
           <SubmitButton submitting={submitting} onSubmit={handleSubmit} />
