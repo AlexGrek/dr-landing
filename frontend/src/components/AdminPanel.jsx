@@ -500,6 +500,7 @@ export default function AdminPanel() {
               yaml={buildGuestsYaml(registrations)}
             />
 
+            <div className="registrations-table-scroll">
             <div className="registrations-table">
               <div className="table-header">
                 <div className="col-name">Name</div>
@@ -566,6 +567,7 @@ export default function AdminPanel() {
                   </motion.div>
                 ))}
               </div>
+            </div>
             </div>
 
             <PrefsHistograms registrations={registrations} />

@@ -2,6 +2,10 @@
   min-height: 100vh;
   background: linear-gradient(135deg, #0f0f1e 0%, #1a1a2e 100%);
   padding: 2rem;
+
+  @media (max-width: 600px) {
+    padding: 1rem 0.75rem;
+  }
 }
 
 .admin-container {
@@ -12,6 +16,10 @@
 .admin-header {
   text-align: center;
   margin-bottom: 3rem;
+
+  @media (max-width: 600px) {
+    margin-bottom: 1.5rem;
+  }
 }
 
 .admin-title {
@@ -19,12 +27,20 @@
   color: #fff;
   margin: 0 0 0.5rem 0;
   font-weight: 700;
+
+  @media (max-width: 600px) {
+    font-size: 1.5rem;
+  }
 }
 
 .admin-subtitle {
   color: #888;
   font-size: 1rem;
   margin: 0;
+
+  @media (max-width: 600px) {
+    font-size: 0.85rem;
+  }
 }
 
 .admin-loading,
@@ -76,8 +92,14 @@
 .admin-controls {
   margin-bottom: 2rem;
   display: flex;
-  gap: 1rem;
+  gap: 0.75rem;
   align-items: center;
+  flex-wrap: wrap;
+
+  @media (max-width: 600px) {
+    margin-bottom: 1rem;
+    gap: 0.5rem;
+  }
 }
 
 .sort-select {
@@ -90,6 +112,13 @@
   cursor: pointer;
   transition: all 0.3s ease;
 
+  @media (max-width: 600px) {
+    padding: 0.5rem 0.6rem;
+    font-size: 0.82rem;
+    flex: 1;
+    min-width: 0;
+  }
+
   &:hover {
     background: rgba(255, 255, 255, 0.12);
     border-color: rgba(255, 255, 255, 0.25);
@@ -101,20 +130,38 @@
   }
 }
 
+.registrations-table-scroll {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  margin-bottom: 2rem;
+  border-radius: 1rem;
+
+  &::-webkit-scrollbar {
+    height: 4px;
+  }
+  &::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  &::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.12);
+    border-radius: 2px;
+  }
+}
+
 .registrations-table {
   background: rgba(255, 255, 255, 0.03);
   border: 1px solid rgba(255, 255, 255, 0.08);
   border-radius: 1rem;
   overflow: hidden;
   backdrop-filter: blur(10px);
-  margin-bottom: 2rem;
+  min-width: 560px;
 }
 
 .table-header {
   display: grid;
   grid-template-columns: 1.5fr 1fr 1fr 1.2fr 0.8fr;
   gap: 1rem;
-  padding: 1rem;
+  padding: 0.75rem 1rem;
   background: rgba(255, 255, 255, 0.05);
   border-bottom: 1px solid rgba(255, 255, 255, 0.08);
   font-weight: 600;
@@ -123,9 +170,10 @@
   letter-spacing: 0.05em;
   color: #888;
 
-  @media (max-width: 1024px) {
-    grid-template-columns: 1fr;
-    gap: 0;
+  @media (max-width: 600px) {
+    font-size: 0.72rem;
+    padding: 0.5rem 0.6rem;
+    gap: 0.5rem;
   }
 }
 
@@ -155,7 +203,7 @@
   display: grid;
   grid-template-columns: 1.5fr 1fr 1fr 1.2fr 0.8fr;
   gap: 1rem;
-  padding: 1rem;
+  padding: 0.75rem 1rem;
   border-bottom: 1px solid rgba(255, 255, 255, 0.05);
   align-items: center;
   font-size: 0.9rem;
@@ -173,25 +221,10 @@
     }
   }
 
-  @media (max-width: 1024px) {
-    grid-template-columns: 1fr;
+  @media (max-width: 600px) {
+    font-size: 0.78rem;
+    padding: 0.5rem 0.6rem;
     gap: 0.5rem;
-    padding: 1rem;
-
-    .col-name,
-    .col-code,
-    .col-time,
-    .col-date,
-    .col-prefs {
-      &::before {
-        content: attr(data-label);
-        font-weight: 600;
-        color: #888;
-        font-size: 0.75rem;
-        display: block;
-        margin-bottom: 0.25rem;
-      }
-    }
   }
 }
 
@@ -466,6 +499,11 @@
   cursor: pointer;
   transition: all 0.2s ease;
 
+  @media (max-width: 600px) {
+    padding: 0.5rem 0.7rem;
+    font-size: 0.8rem;
+  }
+
   &:hover:not(:disabled) {
     background: rgba(255, 80, 80, 0.22);
     border-color: rgba(255, 80, 80, 0.5);
@@ -489,6 +527,11 @@
   cursor: pointer;
   transition: background 0.2s, border-color 0.2s;
   white-space: nowrap;
+
+  @media (max-width: 600px) {
+    padding: 0.5rem 0.7rem;
+    font-size: 0.8rem;
+  }
 
   &:hover:not(:disabled) {
     background: rgba(100, 180, 255, 0.15);
