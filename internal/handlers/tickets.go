@@ -102,6 +102,18 @@ func GetRegistration(c fiber.Ctx) error {
 	return c.JSON(reg)
 }
 
+// OGTagsForCode returns OG title and description for a /verify/:code page.
+// Called server-side so Telegram's crawler sees the meta tags before JS runs.
+func OGTagsForCode(code string) (title, description string) {
+	var reg database.Registration
+	if err := database.DB.Where("invitation_code = ?", code).First(&reg).Error; err != nil {
+		return "Birthday Party 3.0 🎉", "You're invited to Birthday Party 3.0 — March 22, 2026 at Wabi Sabi Space, Kyiv."
+	}
+	title = "🎟 " + reg.Name + " — Birthday Party 3.0"
+	description = "Arrival: " + reg.ArrivalTime + " · March 22, 2026 · Wabi Sabi Space, Kyiv"
+	return title, description
+}
+
 func Health(version string) fiber.Handler {
 	return func(c fiber.Ctx) error {
 		return c.JSON(fiber.Map{"status": "healthy", "version": version})

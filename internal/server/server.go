@@ -1,6 +1,7 @@
 package server
 
 import (
+	"bytes"
 	"io/fs"
 
 	"dr-landing/internal/handlers"
@@ -50,6 +51,38 @@ func New(version string) *fiber.App {
 	}
 	app.Get("/", serveIndex)
 	app.Get("/index.html", serveIndex)
+
+	// /verify/:code — inject dynamic OG meta tags so Telegram previews show
+	// guest-specific info. Telegram's crawler doesn't run JS, so we must
+	// server-render the meta tags into the HTML before returning it.
+	app.Get("/verify/:code", func(c fiber.Ctx) error {
+		code := c.Params("code")
+		title, description := handlers.OGTagsForCode(code)
+
+		index, err := appstatic.DistFS.ReadFile("dist/index.html")
+		if err != nil {
+			return fiber.ErrNotFound
+		}
+
+		ogTags := `<meta property="og:title" content="` + title + `" />` +
+			`<meta property="og:description" content="` + description + `" />` +
+			`<meta property="og:type" content="website" />` +
+			`<meta property="og:image" content="https://fonts.gstatic.com/s/e/notoemoji/latest/1f382/512.png" />` +
+			`<meta property="og:image:width" content="512" />` +
+			`<meta property="og:image:height" content="512" />` +
+			`<meta name="twitter:card" content="summary" />` +
+			`<meta name="twitter:title" content="` + title + `" />` +
+			`<meta name="twitter:description" content="` + description + `" />` +
+			`<meta name="twitter:image" content="https://fonts.gstatic.com/s/e/notoemoji/latest/1f382/512.png" />`
+
+		patched := bytes.Replace(index, []byte(`</head>`), []byte(ogTags+`</head>`), 1)
+
+		c.Set(fiber.HeaderContentType, fiber.MIMETextHTMLCharsetUTF8)
+		c.Set(fiber.HeaderCacheControl, "no-cache, no-store, must-revalidate")
+		c.Set("Pragma", "no-cache")
+		c.Set("Expires", "0")
+		return c.Send(patched)
+	})
 
 	// Vite content-hashes all filenames under /assets/, so they are safe to
 	// cache indefinitely — the hash changes whenever the content changes.
