@@ -1,8 +1,15 @@
+import { useState, useEffect } from 'react'
 import { createPortal } from 'react-dom'
 import { motion, AnimatePresence } from 'framer-motion'
 
 export default function MorphModal({ open, originRect, onClose, closeOnBackdropClick = true, children }) {
   if (typeof document === 'undefined') return null
+
+  const [contentReady, setContentReady] = useState(false)
+
+  useEffect(() => {
+    if (!open) setContentReady(false)
+  }, [open])
 
   const isMobile = window.innerWidth < 600
   const modalW = isMobile ? window.innerWidth - 16 : Math.min(540, window.innerWidth - 32)
@@ -67,18 +74,21 @@ export default function MorphModal({ open, originRect, onClose, closeOnBackdropC
               rotateX: { type: 'spring', stiffness: 260, damping: 22 },
               scale: { type: 'spring', stiffness: 260, damping: 22 },
             }}
+            onAnimationComplete={() => { if (open) setContentReady(true) }}
             onClick={(e) => e.stopPropagation()}
           >
-            <motion.div
-              className="modal__inner"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              transition={{ delay: 0.26, duration: 0.2 }}
-            >
+            <div className="modal__inner">
               <button className="modal__close" onClick={onClose} aria-label="Close">×</button>
-              {children}
-            </motion.div>
+              {contentReady && (
+                <motion.div
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  transition={{ duration: 0.12 }}
+                >
+                  {children}
+                </motion.div>
+              )}
+            </div>
           </motion.div>
         </>
       )}

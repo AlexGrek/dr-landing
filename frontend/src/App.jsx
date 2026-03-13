@@ -278,14 +278,15 @@ function FooterTagline({ text }) {
   const chars = text.split('')
 
   return (
-    <p className="footer__tagline" ref={ref}>
+    <p
+      className="footer__tagline"
+      ref={ref}
+      style={isInView ? { animation: 'footer-shimmer 1.8s linear 0.2s 1 forwards' } : {}}
+    >
       {chars.map((ch, i) => (
         <motion.span
           key={i}
           className={`footer__tagline-letter${ch === ' ' ? ' footer__tagline-letter--space' : ''}`}
-          style={isInView ? {
-            animation: `footer-shimmer 1.8s linear ${i * 0.055}s 1 forwards`,
-          } : {}}
           initial={{ opacity: 0, y: 14 }}
           animate={isInView ? { opacity: 1, y: 0 } : {}}
           transition={{ duration: 0.55, delay: i * 0.055, ease: [0.22, 1, 0.36, 1] }}
