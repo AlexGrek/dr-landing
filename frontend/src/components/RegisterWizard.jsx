@@ -4,28 +4,9 @@ import { Users, Wine, Music, Shirt, Clock, CheckCircle2, ScrollText } from 'luci
 import DRINK_OPTIONS from '../config/drinkOptions.json'
 import ACTIVITY_OPTIONS from '../config/activityOptions.json'
 import DRESS_CODE_OPTIONS from '../config/dressCodeOptions.json'
+import RULES_TEXT from '../config/rulesText.js'
 
 const MAX_GUESTS = 8
-
-const RULES_TEXT = `1. Your ticket is personal and non-transferable. Each QR code admits the guests listed on it only.
-
-2. Arrival window is 15:00 – 19:00. Doors close at 20:00. If you're running late, please let us know in the notes.
-
-3. The venue has a maximum capacity. If you registered for a time slot, please try to arrive within 30 minutes of your chosen time.
-
-4. Dress code is a recommendation, not a requirement — but we hope you'll join the fun.
-
-5. Photos and videos are welcome for personal use. Please ask before posting anything that features other guests.
-
-6. Alcohol is for guests 18+. Know your limits and look after each other.
-
-7. The hosts reserve the right to ask anyone who is being disrespectful or disruptive to leave.
-
-8. Food and drink preferences are used for planning only — we can't guarantee every option will be available.
-
-9. If you need to cancel after registering, please do so at least 24 hours in advance so we can adjust the headcount.
-
-10. Most importantly: come ready to have a great time. 🎉`
 
 const STAGES = [
   { Icon: Users, title: "Who's coming?",        accent: '#d9af5d' },

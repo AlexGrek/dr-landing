@@ -513,12 +513,30 @@ body {
 
   &__btn-wrap {
     display: flex;
-    justify-content: center;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.75rem;
 
     .register-btn {
       width: auto;
       min-width: 220px;
     }
+  }
+
+  &__rules-link {
+    background: none;
+    border: none;
+    padding: 0;
+    cursor: pointer;
+    font-size: 0.78rem;
+    color: @text-secondary;
+    letter-spacing: 0.06em;
+    text-decoration: underline;
+    text-underline-offset: 3px;
+    opacity: 0.6;
+    transition: opacity 0.2s;
+
+    &:hover { opacity: 1; }
   }
 
   &__card {
@@ -643,6 +661,9 @@ body {
     padding: 3rem 2rem 2rem;
     overflow-y: auto;
     overscroll-behavior: contain;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
 
     @media (min-width: 480px) {
       padding: 3rem 2.5rem 2.5rem;
@@ -797,7 +818,7 @@ body {
 
   &__rules-text {
     width: 100%;
-    height: 240px;
+    height: 360px;
     resize: none;
     overflow-y: auto;
     font-family: inherit;
@@ -815,6 +836,12 @@ body {
 
     &:focus {
       border-color: @card-border;
+    }
+
+    &--fill {
+      height: auto;
+      flex: 1;
+      min-height: 0;
     }
   }
 

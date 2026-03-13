@@ -7,6 +7,7 @@ import RegisterWizard from './components/RegisterWizard'
 import VerifyRegistration from './components/VerifyRegistration'
 import AdminPanel from './components/AdminPanel'
 import TicketConfirmation from './components/TicketConfirmation'
+import RULES_TEXT from './config/rulesText.js'
 
 function ProgressBar() {
   const { scrollYProgress } = useScroll()
@@ -404,7 +405,7 @@ function RegisterForm({ onSuccess }) {
   )
 }
 
-function RegisterSection({ onOpen, modalOpen, sectionRef }) {
+function RegisterSection({ onOpen, modalOpen, sectionRef, onOpenRules }) {
   return (
     <section className="tickets" id="register" ref={sectionRef}>
       <ScrollReveal>
@@ -418,6 +419,9 @@ function RegisterSection({ onOpen, modalOpen, sectionRef }) {
           <button className="register-btn" onClick={onOpen}>
             Register Now
           </button>
+          <button className="tickets__rules-link" onClick={onOpenRules}>
+            rules &amp; conditions
+          </button>
         </div>
       </ScrollReveal>
     </section>
@@ -430,6 +434,8 @@ export default function App() {
   const [originRect, setOriginRect] = useState(null)
   const [registered, setRegistered] = useState(false)
   const [registrationData, setRegistrationData] = useState(null)
+  const [rulesOpen, setRulesOpen] = useState(false)
+  const [rulesOriginRect, setRulesOriginRect] = useState(null)
   const registerSectionRef = useRef(null)
   const registerInView = useInView(registerSectionRef, { amount: 0.2 })
 
@@ -456,6 +462,11 @@ export default function App() {
     setRegistered(false)
   }
 
+  const openRules = (e) => {
+    setRulesOriginRect(e.currentTarget.getBoundingClientRect())
+    setRulesOpen(true)
+  }
+
   return (
     <div className="app">
       <ProgressBar />
@@ -471,7 +482,7 @@ export default function App() {
       <DateSection />
       <CountdownSection />
       <LocationSection />
-      <RegisterSection onOpen={openModal} modalOpen={modalOpen} sectionRef={registerSectionRef} />
+      <RegisterSection onOpen={openModal} modalOpen={modalOpen} sectionRef={registerSectionRef} onOpenRules={openRules} />
 
       <footer className="footer">
         <FooterTagline text="See you there" />
@@ -492,6 +503,14 @@ export default function App() {
           </a>
         </div>
       </footer>
+
+      <MorphModal
+        open={rulesOpen}
+        originRect={rulesOriginRect}
+        onClose={() => setRulesOpen(false)}
+      >
+        <textarea className="wizard__rules-text wizard__rules-text--fill" readOnly value={RULES_TEXT} />
+      </MorphModal>
 
       <MorphModal
         open={modalOpen}
