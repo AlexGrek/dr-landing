@@ -1,13 +1,15 @@
-import { useState, useEffect, useRef } from 'react'
+import { useState, useEffect, useRef, lazy, Suspense } from 'react'
 import { motion, useScroll, useTransform, AnimatePresence, useInView } from 'framer-motion'
-import { Card, CardBody } from '@heroui/react'
 import ScrollReveal from './components/ScrollReveal'
 import MorphModal from './components/MorphModal'
-import RegisterWizard from './components/RegisterWizard'
-import VerifyRegistration from './components/VerifyRegistration'
-import AdminPanel from './components/AdminPanel'
-import TicketConfirmation from './components/TicketConfirmation'
-import RULES_TEXT from './config/rulesText.js'
+
+// Lazy-loaded route pages (separate chunks — recharts/js-yaml never loaded on main page)
+const VerifyRegistration = lazy(() => import('./components/VerifyRegistration'))
+const AdminPanel = lazy(() => import('./components/AdminPanel'))
+
+// Lazy-loaded modal content (only fetched when modal opens)
+const RegisterWizard = lazy(() => import('./components/RegisterWizard'))
+const TicketConfirmation = lazy(() => import('./components/TicketConfirmation'))
 
 function ProgressBar() {
   const { scrollYProgress } = useScroll()
@@ -295,116 +297,16 @@ function FooterTagline({ text }) {
   )
 }
 
-// ── 6. REGISTER ───────────────────────────────────────────────────────────────
-const MAX_GUESTS = 8
-
-function RegisterForm({ onSuccess }) {
-  const [submitting, setSubmitting] = useState(false)
-  const [primaryName, setPrimaryName] = useState('')
-  const [partners, setPartners] = useState([])
-
-  const allNames = [primaryName, ...partners]
-  const canAddPartner = allNames.length < MAX_GUESTS
-  const isFilled = primaryName.trim() !== ''
-
-  const addPartner = () => {
-    if (canAddPartner) setPartners((p) => [...p, ''])
-  }
-
-  const updatePartner = (i, val) =>
-    setPartners((p) => p.map((v, idx) => (idx === i ? val : v)))
-
-  const removePartner = (i) =>
-    setPartners((p) => p.filter((_, idx) => idx !== i))
-
-  const handleSubmit = async () => {
-    if (!isFilled || submitting) return
-    setSubmitting(true)
-    try {
-      const body = {
-        name: primaryName.trim(),
-        invitation_code: crypto.randomUUID(),
-        additional_info: partners.length
-          ? JSON.stringify(partners.filter((n) => n.trim()))
-          : '',
-      }
-      const res = await fetch('/api/register', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(body),
-      })
-      if (res.ok) onSuccess()
-    } finally {
-      setSubmitting(false)
-    }
-  }
-
-  return (
-    <div className="tickets__form">
-      <div className="tickets__field">
-        <input
-          className="tickets__input"
-          type="text"
-          placeholder="Your name"
-          value={primaryName}
-          onChange={(e) => setPrimaryName(e.target.value)}
-          autoComplete="name"
-        />
-      </div>
-
-      <AnimatePresence initial={false}>
-        {partners.map((val, i) => (
-          <motion.div
-            key={i}
-            className="tickets__field"
-            initial={{ opacity: 0, height: 0 }}
-            animate={{ opacity: 1, height: 'auto' }}
-            exit={{ opacity: 0, height: 0 }}
-            transition={{ duration: 0.28, ease: [0.22, 1, 0.36, 1] }}
-          >
-            <div className="tickets__partner-row">
-              <input
-                className="tickets__input"
-                type="text"
-                placeholder={`Partner ${i + 1}`}
-                value={val}
-                onChange={(e) => updatePartner(i, e.target.value)}
-                autoComplete="off"
-              />
-              <button
-                className="tickets__remove-btn"
-                onClick={() => removePartner(i)}
-                aria-label="Remove"
-              >
-                ×
-              </button>
-            </div>
-          </motion.div>
-        ))}
-      </AnimatePresence>
-
-      {canAddPartner && (
-        <button className="tickets__add-partner" onClick={addPartner}>
-          + Add partner
-          <span className="tickets__add-count">
-            {allNames.length}/{MAX_GUESTS}
-          </span>
-        </button>
-      )}
-
-      <div className="tickets__btn-wrap">
-        <button
-          className="register-btn"
-          disabled={submitting || !isFilled}
-          onClick={handleSubmit}
-        >
-          {submitting ? 'Sending…' : 'Register Now'}
-        </button>
-      </div>
-    </div>
-  )
+// ── Lazy Rules Text (loaded on demand) ────────────────────────────────────────
+function LazyRulesText() {
+  const [text, setText] = useState('')
+  useEffect(() => {
+    import('./config/rulesText.js').then(m => setText(m.default))
+  }, [])
+  return <textarea className="wizard__rules-text wizard__rules-text--fill" readOnly value={text} />
 }
 
+// ── 6. REGISTER ───────────────────────────────────────────────────────────────
 function RegisterSection({ onOpen, modalOpen, sectionRef, onOpenRules }) {
   return (
     <section className="tickets" id="register" ref={sectionRef}>
@@ -445,11 +347,19 @@ export default function App() {
 
   if (verifyMatch) {
     const code = verifyMatch[1]
-    return <VerifyRegistration code={code} />
+    return (
+      <Suspense fallback={<div className="lazy-loading">Loading…</div>}>
+        <VerifyRegistration code={code} />
+      </Suspense>
+    )
   }
 
   if (pathname === '/birthday_is_for_me') {
-    return <AdminPanel />
+    return (
+      <Suspense fallback={<div className="lazy-loading">Loading…</div>}>
+        <AdminPanel />
+      </Suspense>
+    )
   }
 
   const openModal = (e) => {
@@ -509,7 +419,7 @@ export default function App() {
         originRect={rulesOriginRect}
         onClose={() => setRulesOpen(false)}
       >
-        <textarea className="wizard__rules-text wizard__rules-text--fill" readOnly value={RULES_TEXT} />
+        <LazyRulesText />
       </MorphModal>
 
       <MorphModal
@@ -518,14 +428,16 @@ export default function App() {
         onClose={closeModal}
         closeOnBackdropClick={!registered}
       >
-        {registered ? (
-          <TicketConfirmation data={registrationData} />
-        ) : (
-          <RegisterWizard onSuccess={(data) => {
-            setRegistrationData(data)
-            setRegistered(true)
-          }} />
-        )}
+        <Suspense fallback={<div className="lazy-loading">Loading…</div>}>
+          {registered ? (
+            <TicketConfirmation data={registrationData} />
+          ) : (
+            <RegisterWizard onSuccess={(data) => {
+              setRegistrationData(data)
+              setRegistered(true)
+            }} />
+          )}
+        </Suspense>
       </MorphModal>
     </div>
   )

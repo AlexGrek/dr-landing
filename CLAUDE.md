@@ -136,6 +136,9 @@ make helm-template                         # preview manifests
 - Admin: `/birthday_is_for_me`
 - Verify ticket: `/verify/:code`
 
+## Frontend Optimization
+See [OPTIMIZATION_RULES.md](OPTIMIZATION_RULES.md) for code-splitting strategy, lazy loading rules, and vendor chunk configuration.
+
 ## Before Making Changes
 - Run `make build` to verify Go compilation
 - Frontend: `npm run build` in `frontend/` to catch JS errors
