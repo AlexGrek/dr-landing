@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Users, Wine, Music, Shirt, Clock, CheckCircle2, ScrollText } from 'lucide-react'
+import ReactMarkdown from 'react-markdown'
 import DRINK_OPTIONS from '../config/drinkOptions.json'
 import ACTIVITY_OPTIONS from '../config/activityOptions.json'
 import DRESS_CODE_OPTIONS from '../config/dressCodeOptions.json'
@@ -30,11 +31,9 @@ const slide = {
 function StageRules() {
   return (
     <div className="wizard__stage-body">
-      <textarea
-        className="wizard__rules-text"
-        readOnly
-        value={RULES_TEXT}
-      />
+      <div className="wizard__rules-text">
+        <ReactMarkdown>{RULES_TEXT}</ReactMarkdown>
+      </div>
     </div>
   )
 }

@@ -299,12 +299,20 @@ function FooterTagline({ text }) {
 }
 
 // ── Lazy Rules Text (loaded on demand) ────────────────────────────────────────
+const ReactMarkdown = lazy(() => import('react-markdown'))
+
 function LazyRulesText() {
   const [text, setText] = useState('')
   useEffect(() => {
     import('./config/rulesText.js').then(m => setText(m.default))
   }, [])
-  return <textarea className="wizard__rules-text wizard__rules-text--fill" readOnly value={text} />
+  return (
+    <div className="wizard__rules-text wizard__rules-text--fill">
+      <Suspense fallback={null}>
+        <ReactMarkdown>{text}</ReactMarkdown>
+      </Suspense>
+    </div>
+  )
 }
 
 // ── 6. REGISTER ───────────────────────────────────────────────────────────────
