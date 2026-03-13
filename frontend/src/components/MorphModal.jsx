@@ -84,6 +84,7 @@ export default function MorphModal({ open, originRect, onClose, closeOnBackdropC
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
                   transition={{ duration: 0.12 }}
+                  style={{ flex: 1, minHeight: 0, display: 'flex', flexDirection: 'column' }}
                 >
                   {children}
                 </motion.div>
