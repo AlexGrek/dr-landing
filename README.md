@@ -100,4 +100,4 @@ make helm-template                       # preview rendered manifests
 
 ## License
 
-MIT
+WTFPL
