@@ -28,48 +28,18 @@ function downloadCalendar(arrivalTime) {
   URL.revokeObjectURL(url)
 }
 
-const DRINK_OPTIONS = [
-  { id: 'wine',      label: 'Wine',        icon: '🍷' },
-  { id: 'cocktails', label: 'Cocktails',   icon: '🍸' },
-  { id: 'beer',      label: 'Beer',        icon: '🍺' },
-  { id: 'champagne', label: 'Champagne',   icon: '🥂' },
-  { id: 'soft',      label: 'Soft drinks', icon: '🧃' },
-  { id: 'noalcohol', label: 'No alcohol',  icon: '🚫' },
-  { id: 'pizza',     label: 'Pizza',       icon: '🍕' },
-  { id: 'sushi',     label: 'Sushi',       icon: '🍣' },
-  { id: 'sweets',    label: 'Sweets',      icon: '🧁' },
-  { id: 'salads',    label: 'Salads',      icon: '🥗' },
-]
-
-const ACTIVITY_OPTIONS = [
-  { id: 'dancing',     label: 'Dancing',     icon: '💃' },
-  { id: 'live_music',  label: 'Live Music',  icon: '🎵' },
-  { id: 'board_games', label: 'Board Games', icon: '🎲' },
-  { id: 'karaoke',     label: 'Karaoke',     icon: '🎤' },
-  { id: 'photo_booth', label: 'Photo Booth', icon: '📸' },
-  { id: 'chill',       label: 'Chill Zone',  icon: '🛋️' },
-  { id: 'billiards',   label: 'Billiards',   icon: '🎱' },
-  { id: 'rooftop',     label: 'Rooftop',     icon: '🌙' },
-]
-
 function parsePrefs(json) {
   try { return JSON.parse(json) } catch { return [] }
 }
 
-function PrefChips({ json, options }) {
-  const ids = parsePrefs(json)
-  if (!ids.length) return <p className="preference pref-empty">No preference</p>
+function PrefChips({ json }) {
+  const items = parsePrefs(json)
+  if (!items.length) return <p className="preference pref-empty">No preference</p>
   return (
     <div className="pref-chips">
-      {ids.map(id => {
-        const opt = options.find(o => o.id === id)
-        return opt ? (
-          <span key={id} className="pref-chip">
-            <span className="pref-chip__icon">{opt.icon}</span>
-            {opt.label}
-          </span>
-        ) : null
-      })}
+      {items.map((item, i) => (
+        <span key={i} className="pref-chip">{item}</span>
+      ))}
     </div>
   )
 }
@@ -175,14 +145,21 @@ export default function VerifyRegistration({ code }) {
               {registration.drink_prefs && (
                 <div className="card-section">
                   <h3 className="section-title">Food & Drinks</h3>
-                  <PrefChips json={registration.drink_prefs} options={DRINK_OPTIONS} />
+                  <PrefChips json={registration.drink_prefs} />
+                </div>
+              )}
+
+              {registration.dress_code_prefs && (
+                <div className="card-section">
+                  <h3 className="section-title">Dress Code</h3>
+                  <PrefChips json={registration.dress_code_prefs} />
                 </div>
               )}
 
               {registration.activity_prefs && (
                 <div className="card-section">
                   <h3 className="section-title">Activities</h3>
-                  <PrefChips json={registration.activity_prefs} options={ACTIVITY_OPTIONS} />
+                  <PrefChips json={registration.activity_prefs} />
                 </div>
               )}
 
