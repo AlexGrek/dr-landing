@@ -149,6 +149,15 @@ export default function TicketConfirmation({ data }) {
         Ticket is required to visit the event.
         <br />
         Every ticket is unique — do not share.
+        <br />
+        <a
+          className="ticket-confirmation__edit-link"
+          href={`/verify/${data.invitationCode}`}
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          edit
+        </a>
       </motion.p>
     </div>
   )

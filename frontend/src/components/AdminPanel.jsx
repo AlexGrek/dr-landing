@@ -508,6 +508,7 @@ export default function AdminPanel() {
                 <div className="col-time">Arrival Time</div>
                 <div className="col-date">Created</div>
                 <div className="col-prefs">Preferences</div>
+                <div className="col-actions"></div>
               </div>
 
               <div className="table-body">
@@ -563,6 +564,21 @@ export default function AdminPanel() {
                           </>)
                         })()}
                       </div>
+                    </div>
+                    <div className="col-actions">
+                      <a
+                        className="verify-link-btn"
+                        href={`/verify/${reg.invitation_code}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        title="View ticket page"
+                        onClick={e => e.stopPropagation()}
+                      >
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                          <path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7z"/>
+                          <circle cx="12" cy="12" r="3"/>
+                        </svg>
+                      </a>
                     </div>
                   </motion.div>
                 ))}

@@ -89,7 +89,26 @@ export default function VerifyRegistration({ code }) {
           transition={{ duration: 0.6 }}
         >
           <h1 className="verify-title">Your Registration</h1>
-          <p className="verify-code">Code: {code}</p>
+          <motion.span
+            className="verify-badge"
+            initial={{ scale: 0, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
+            transition={{ type: 'spring', stiffness: 480, damping: 22, delay: 0.35 }}
+          >
+            <svg className="verify-badge__check" viewBox="0 0 16 16" fill="none">
+              <motion.path
+                d="M3 8.5 L6.5 12 L13 5"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                initial={{ pathLength: 0 }}
+                animate={{ pathLength: 1 }}
+                transition={{ duration: 0.35, delay: 0.6, ease: 'easeOut' }}
+              />
+            </svg>
+            verified
+          </motion.span>
         </motion.div>
 
         {loading && (
@@ -131,7 +150,7 @@ export default function VerifyRegistration({ code }) {
                     <span className="value">{registration.name}</span>
                   </div>
                   <div className="info-item">
-                    <span className="label">Created</span>
+                    <span className="label">Registered</span>
                     <span className="value">
                       {new Date(registration.created_at).toLocaleDateString('en-US', {
                         year: 'numeric',
@@ -184,7 +203,9 @@ export default function VerifyRegistration({ code }) {
                   <p className="avatar">{registration.avatar}</p>
                 </div>
               )}
+            </div>
 
+            <div className="verify-card verify-card--static">
               <div className="card-section">
                 <h3 className="section-title">Location</h3>
                 <p className="verify-address">
@@ -213,6 +234,7 @@ export default function VerifyRegistration({ code }) {
             </div>
 
             <a href="/" className="back-link">← Back to Landing Page</a>
+            <p className="verify-code">code: {code}</p>
           </motion.div>
         )}
 
