@@ -29,10 +29,19 @@ const slide = {
 
 // ── Stage 1: Rules & Conditions ───────────────────────────────────────────────
 function StageRules() {
+  const [atEnd, setAtEnd] = useState(false)
   return (
     <div className="wizard__stage-body">
-      <div className="wizard__rules-text">
-        <ReactMarkdown>{RULES_TEXT}</ReactMarkdown>
+      <div className="wizard__rules-wrap" data-at-end={atEnd}>
+        <div
+          className="wizard__rules-text"
+          onScroll={e => {
+            const el = e.currentTarget
+            setAtEnd(el.scrollTop + el.clientHeight >= el.scrollHeight - 8)
+          }}
+        >
+          <ReactMarkdown>{RULES_TEXT}</ReactMarkdown>
+        </div>
       </div>
     </div>
   )

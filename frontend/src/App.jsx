@@ -303,14 +303,23 @@ const ReactMarkdown = lazy(() => import('react-markdown'))
 
 function LazyRulesText() {
   const [text, setText] = useState('')
+  const [atEnd, setAtEnd] = useState(false)
   useEffect(() => {
     import('./config/rulesText.js').then(m => setText(m.default))
   }, [])
   return (
-    <div className="wizard__rules-text wizard__rules-text--fill">
-      <Suspense fallback={null}>
-        <ReactMarkdown>{text}</ReactMarkdown>
-      </Suspense>
+    <div className="wizard__rules-wrap wizard__rules-wrap--fill" data-at-end={atEnd}>
+      <div
+        className="wizard__rules-text wizard__rules-text--fill"
+        onScroll={e => {
+          const el = e.currentTarget
+          setAtEnd(el.scrollTop + el.clientHeight >= el.scrollHeight - 8)
+        }}
+      >
+        <Suspense fallback={null}>
+          <ReactMarkdown>{text}</ReactMarkdown>
+        </Suspense>
+      </div>
     </div>
   )
 }
