@@ -123,17 +123,29 @@ func Health(version string) fiber.Handler {
 func ServeQRCode(c fiber.Ctx) error {
 	code := c.Params("code")
 
-	// Set up QR code directory (must match where they're saved)
-	qrDir := os.Getenv("QR_DIR")
-	if qrDir == "" {
-		qrDir = "./data/qrcodes"
+	// Verify the code exists in DB
+	var reg database.Registration
+	if err := database.DB.Where("invitation_code = ?", code).First(&reg).Error; err != nil {
+		return c.Status(404).JSON(fiber.Map{"error": "QR code not found"})
 	}
 
-	// Read QR code from disk
-	qrFile := filepath.Join(qrDir, code+".png")
+	// Try disk cache first, generate on-the-fly if missing
+	qrFile := filepath.Join(qrDir(), code+".png")
 	pngData, err := os.ReadFile(qrFile)
 	if err != nil {
-		return c.Status(404).JSON(fiber.Map{"error": "QR code not found"})
+		baseURL := os.Getenv("BASE_URL")
+		if baseURL == "" {
+			baseURL = "http://localhost:8080"
+		}
+		verifyURL := baseURL + "/verify/" + code
+		savedPath, genErr := services.SaveQRCodeToDisk(code, verifyURL, qrDir())
+		if genErr != nil {
+			return c.Status(500).JSON(fiber.Map{"error": "Failed to generate QR code"})
+		}
+		pngData, err = os.ReadFile(savedPath)
+		if err != nil {
+			return c.Status(500).JSON(fiber.Map{"error": "Failed to read generated QR code"})
+		}
 	}
 
 	c.Set(fiber.HeaderContentType, "image/png")
