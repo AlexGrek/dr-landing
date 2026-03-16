@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
+import { QrCode } from 'lucide-react'
 import {
   BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, Cell
 } from 'recharts'
@@ -157,6 +158,43 @@ function GuestModal({ guest, onClose, onDelete }) {
             label="🗑 Delete guest"
             confirmLabel="Yes, delete"
             onConfirm={doDelete}
+          />
+        </div>
+      </motion.div>
+    </motion.div>
+  )
+}
+
+function QrModal({ guest, onClose }) {
+  if (!guest) return null
+  return (
+    <motion.div
+      className="guest-overlay"
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      onClick={onClose}
+    >
+      <motion.div
+        className="qr-modal"
+        initial={{ opacity: 0, scale: 0.88, y: 20 }}
+        animate={{ opacity: 1, scale: 1, y: 0 }}
+        exit={{ opacity: 0, scale: 0.88, y: 20 }}
+        transition={{ type: 'spring', stiffness: 360, damping: 26 }}
+        onClick={e => e.stopPropagation()}
+      >
+        <div className="qr-modal-header">
+          <div>
+            <p className="qr-modal-name">{guest.name}</p>
+            <code className="code-text">{guest.invitation_code}</code>
+          </div>
+          <button className="guest-modal-close" onClick={onClose}>✕</button>
+        </div>
+        <div className="qr-modal-body">
+          <img
+            className="qr-modal-img"
+            src={`/api/qr-image/${guest.invitation_code}`}
+            alt={`QR ticket for ${guest.name}`}
           />
         </div>
       </motion.div>
@@ -406,6 +444,7 @@ export default function AdminPanel() {
   const [error, setError] = useState(null)
   const [sortBy, setSortBy] = useState('created')
   const [selected, setSelected] = useState(null)
+  const [qrGuest, setQrGuest] = useState(null)
   const [guestsYaml, setGuestsYaml] = useState({ open: false, rect: null })
   const guestsYamlBtnRef = useRef(null)
 
@@ -566,6 +605,13 @@ export default function AdminPanel() {
                       </div>
                     </div>
                     <div className="col-actions">
+                      <button
+                        className="verify-link-btn"
+                        title="Render QR ticket"
+                        onClick={e => { e.stopPropagation(); setQrGuest(reg) }}
+                      >
+                        <QrCode size={16} />
+                      </button>
                       <a
                         className="verify-link-btn"
                         href={`/verify/${reg.invitation_code}`}
@@ -601,6 +647,12 @@ export default function AdminPanel() {
             onClose={() => setSelected(null)}
             onDelete={handleDelete}
           />
+        )}
+      </AnimatePresence>
+
+      <AnimatePresence>
+        {qrGuest && (
+          <QrModal guest={qrGuest} onClose={() => setQrGuest(null)} />
         )}
       </AnimatePresence>
     </div>
