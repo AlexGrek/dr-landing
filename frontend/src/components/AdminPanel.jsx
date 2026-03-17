@@ -246,17 +246,24 @@ function buildGuestsYaml(registrations) {
 }
 
 function buildPrefsYaml(registrations) {
+  const weights = [1.5, 1.35, 1.2, 1.1, 1.0]
   const data = {}
   for (const { key, label } of CHART_CONFIGS) {
     const counts = {}
     for (const reg of registrations) {
       const parsed = parseJSON(reg[key])
       if (!Array.isArray(parsed)) continue
-      for (const item of parsed) counts[item] = (counts[item] || 0) + 1
+      for (let i = 0; i < parsed.length; i++) {
+        const item = parsed[i]
+        const weight = weights[i] || 1.0
+        counts[item] = (counts[item] || 0) + weight
+      }
     }
-    // sort by count desc
+    // sort by count desc, round to 2 decimals
     data[label] = Object.fromEntries(
-      Object.entries(counts).sort((a, b) => b[1] - a[1])
+      Object.entries(counts)
+        .map(([k, v]) => [k, Math.round(v * 100) / 100])
+        .sort((a, b) => b[1] - a[1])
     )
   }
   return yamlDump(data, { lineWidth: 80 })
@@ -289,16 +296,19 @@ const CHART_CONFIGS = [
 ]
 
 function countPrefs(registrations, key) {
+  const weights = [1.5, 1.35, 1.2, 1.1, 1.0]
   const counts = {}
   for (const reg of registrations) {
     const parsed = parseJSON(reg[key])
     if (!Array.isArray(parsed)) continue
-    for (const item of parsed) {
-      counts[item] = (counts[item] || 0) + 1
+    for (let i = 0; i < parsed.length; i++) {
+      const item = parsed[i]
+      const weight = weights[i] || 1.0
+      counts[item] = (counts[item] || 0) + weight
     }
   }
   return Object.entries(counts)
-    .map(([name, count]) => ({ name, count }))
+    .map(([name, count]) => ({ name, count: Math.round(count * 100) / 100 }))
     .sort((a, b) => b.count - a.count)
 }
 
